@@ -696,6 +696,7 @@ class ExplorationScreen extends React.PureComponent<ExplorationProps, State> {
     }
 
     makeMainPanel(type: ExplorationType): any {
+        console.log("TYPE:::::", type);
         switch (type) {
             case ExplorationType.B_Overview:
                 return <OverviewMainPanel />;

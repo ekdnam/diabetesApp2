@@ -25,7 +25,7 @@ export class DataSourceManager {
     {
       type: DataSourceType.HeartRate,
       category: DataSourceCategory.HeartRate,
-      name: 'Resting Heart Rate',
+      name: 'Blood Glucose',
       description:
         'Heart Rate BPM (Beats per Minute) measured at a specific moment',
     },
