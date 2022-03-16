@@ -34,7 +34,7 @@ import { SettingsSteckParamList } from '@components/Routes';
 import { SystemLogger } from '@core/logging/SystemLogger';
 import { StyleTemplates } from '@style/Styles';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
-import { AboutPanel } from '@components/pages/settings/AbountPanel';
+import { AboutPanel } from './AbountPanel';
 import { format } from 'date-fns';
 
 const unitTypes = [
@@ -378,7 +378,7 @@ interface State {
     loadingMessage?: string;
 }
 
-class InsertBGScreen extends React.PureComponent<Props, State> {
+class SettingsScreen extends React.PureComponent<Props, State> {
     private unitRowRef = React.createRef();
 
     constructor(props: Props) {
@@ -424,7 +424,7 @@ class InsertBGScreen extends React.PureComponent<Props, State> {
     readonly onClickWeight = () => {
         return (
             <View style={styles.parentStyle}>
-                <TextInput style={styles.input} value="128 kg" />
+                <TextInput style={styles.input} value="63 kg" />
             </View>
         );
     };
@@ -586,8 +586,8 @@ class InsertBGScreen extends React.PureComponent<Props, State> {
                         <ScrollView>
                             <Subheader title={'Personal Information'} />
                             <Weight
-                                title="Weight:::::"
-                                value="128 kg"
+                                title="Weight"
+                                value="63 kg"
                                 onClick={this.onClickWeight}
                             />
                             <Height
@@ -737,5 +737,5 @@ function mapStateToProps(appState: ReduxAppState, ownProps: Props): Props {
 const settingsScreen = connect(
     mapStateToProps,
     mapDispatchToProps,
-)(InsertBGScreen);
-export { InsertBGScreen as InsertBGScreen };
+)(SettingsScreen);
+export { settingsScreen as SettingsScreen };

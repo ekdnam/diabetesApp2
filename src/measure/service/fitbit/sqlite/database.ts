@@ -42,6 +42,9 @@ export enum FitbitLocalTableName {
   RestingHeartRate = 'RestingHeartRate',
   HeartRateIntraDayInfo = 'HeartRateIntraDayInfo',
 
+  /* Adding FitbitLocalTableName for BloodGlucose*/
+  BloodGlucose = 'blood_glucose_level',
+
   WeightTrend = 'WeightTrend',
   WeightLog = 'WeightLog',
   CachedRange = 'CachedRange',
@@ -339,6 +342,7 @@ export class FitbitLocalDbManager {
     this._dbInitPromise = SQLite.openDatabase({ ...this._dbConfig })
       .then(db => {
         console.log("db opened.")
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!! database name  : ",this._dbConfig);
         return db
           .transaction(tx => {
             //initialize tables

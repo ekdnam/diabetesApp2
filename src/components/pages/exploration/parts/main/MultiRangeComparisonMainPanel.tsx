@@ -170,9 +170,16 @@ class MultiRangeComparisonMainPanel extends React.PureComponent<Props, State>{
         let startFromZero = true
         let yTickFormat = noop
         let valueConverter = noop
+
+        console.log("CCC In MultiRangeComparisonMainPanel - render() - this.props.source = ", this.props.source);
+
         switch (this.props.source) {
             case DataSourceType.StepCount:
                 yTickFormat = commaNumber
+                break;
+            case DataSourceType.BloodGlucose:
+                yTickFormat = commaNumber
+                console.log("CCC In MultiRangeComparisonMainPanel - render() - in the switch case of BloodGlucose - yTickFormat = ", commaNumber);
                 break;
             case DataSourceType.HeartRate:
                 startFromZero = false
@@ -185,7 +192,7 @@ class MultiRangeComparisonMainPanel extends React.PureComponent<Props, State>{
             case DataSourceType.HoursSlept:
                 yTickFormat = v => DateTimeHelper.formatDuration(v, true)
                 break;*/
-            case DataSourceType.Weight:
+            /*case DataSourceType.Weight:
                 startFromZero = false
                 valueConverter = (value) => {
                     switch (this.props.measureUnitType) {
@@ -195,7 +202,7 @@ class MultiRangeComparisonMainPanel extends React.PureComponent<Props, State>{
                             return convertUnit(value).from('kg').to('lb')
                     }
                 }
-                break;
+                break;*/
         }
 
         const chartArea: LayoutRectangle = {
@@ -375,7 +382,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): Props {
 function mapStateToProps(appState: ReduxAppState, ownProps: Props): Props {
     const source = explorationInfoHelper.getParameterValue<DataSourceType>(appState.explorationDataState.info, ParameterType.DataSource)
 
-    const sumSupported = source === DataSourceType.HoursSlept || source === DataSourceType.StepCount
+    const sumSupported = source === DataSourceType.HoursSlept || source === DataSourceType.StepCount || source === DataSourceType.BloodGlucose
     const data: RangeAggregatedComparisonData<IAggregatedRangeValue | IAggregatedValue> = appState.explorationDataState.data
 
     let allRangesAreSingleDay = data.data.find(d => d.range[0] !== d.range[1]) == null

@@ -28,19 +28,23 @@ export class VoiceDictator {
         if (installed === true) {
 
             this.voiceDictatorNative.registerReceivedEventListener((received) => {
+                console.log()
                 if (this.receivedEventListener) {
+                    //console.log("222222222222222222222222");
                     this.receivedEventListener(received)
                 }
             })
 
             this.voiceDictatorNative.registerStartEventListener(() => {
                 if (this.startEventListener) {
+                    //console.log("3333333333333");
                     this.startEventListener()
                 }
             })
 
             this.voiceDictatorNative.registerStopEventListener((error: any) => {
                 if (this.stopEventListener) {
+                //console.log("77777777777777777777777");
                     this.stopEventListener(error)
                 }
             })

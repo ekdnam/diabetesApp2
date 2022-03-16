@@ -25,8 +25,52 @@ export abstract class FitbitSummaryLogMeasure<
   protected shouldReject(rowValue: number): boolean { return false }
 
   protected getBoxPlotInfoOfDatasetFromDb(): Promise<BoxPlotInfo> {
-    return this.core.fitbitLocalDbManager.getBoxplotInfo(this.dbTableName)
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!! Returning from getBoxPlotInfoOfDatasetFromDb() from FitbitSummaryLogMeasure.ts");
+    return this.core.fitbitLocalDbManager.getBoxplotInfo('blood_glucose_level')
   }
+
+
+
+   async fetchPreliminaryBloodGlucoseData(
+       startDate: number,
+       endDate: number,
+       includeStatistics: boolean
+     ): Promise<{
+       list: Array<any>;
+       avg: number;
+       min: number;
+       max: number;
+       sum: number;
+       valueRange: [number, number]
+     }> {
+
+       const condition = "`numberedDate` BETWEEN ? AND ? ORDER BY `numberedDate`"
+       const params = [startDate, endDate]
+       const list = await this.core.fitbitLocalDbManager.fetchData('blood_glucose_level', condition, params)
+
+       const boxPlotInfo = await this.getBoxPlotInfoOfDataset()
+
+       let statistics
+       if (includeStatistics === true) {
+         statistics = await this.core.fitbitLocalDbManager.getAggregatedValue('blood_glucose_level', [
+           {type: SQLiteHelper.AggregationType.AVG, aggregatedColumnName: 'value', as: 'avg'},
+           {type: SQLiteHelper.AggregationType.MIN, aggregatedColumnName: 'value', as: 'min'},
+           {type: SQLiteHelper.AggregationType.MAX, aggregatedColumnName: 'value', as: 'max'},
+           {type: SQLiteHelper.AggregationType.SUM, aggregatedColumnName: 'value', as: 'sum'},
+         ], condition, params)
+       }
+
+       return Promise.resolve({
+         list,
+         avg: statistics != null ? statistics['avg'] : null,
+         min: statistics != null ? statistics['min'] : null,
+         max: statistics != null ? statistics['max'] : null,
+         sum: statistics != null ? statistics['sum'] : null,
+         valueRange: [boxPlotInfo.minWithoutOutlier, boxPlotInfo.maxWithoutOutlier]
+       });
+     }
+
+
 
   async fetchPreliminaryData(
     startDate: number,
@@ -100,7 +144,7 @@ export abstract class FitbitSummaryLogMeasure<
   }
 
   async fetchCyclicGroupedData(start: number, end: number, cycleType: CyclicTimeFrame): Promise<GroupedData> {
-    const result = await this.core.fitbitLocalDbManager.selectQuery(makeCyclicGroupQuery(this.dbTableName, start, end, cycleType))
+    const result = await this.core.fitbitLocalDbManager.selectQuery(makeCyclicGroupQuery('blood_glucose_level', start, end, cycleType))
     return {
       data: result as any
     }

@@ -600,112 +600,13 @@ class SettingsScreen extends React.PureComponent<Props, State> {
                                 value="22 years"
                                 onClick={this.onClickWeight}
                             />
-                            <Subheader title={'Measure Data Source'} />
+                            <Subheader title={'Record Data'} />
                             <SettingsRow
-                                title="Service"
-                                value={
-                                    DataServiceManager.instance.getServiceByKey(
-                                        this.props.selectedServiceKey,
-                                    ).name
-                                }
+                                title="Blood Glucose"
+                                value="{recentBGLEVEL}"
                                 onClick={this.onPressServiceButton}
                             />
-                            <ServiceQuotaMeter
-                                serviceKey={this.props.selectedServiceKey}
-                            />
-                            <SettingsRow
-                                title="Refresh all data cache"
-                                onClick={this.onPressRefreshAllCache}
-                                showArrow={false}
-                            />
-                            {__DEV__ === true ? (
-                                <SettingsRow
-                                    title={
-                                        'Export ' +
-                                        DataServiceManager.instance.getServiceByKey(
-                                            this.props.selectedServiceKey,
-                                        ).name +
-                                        ' data'
-                                    }
-                                    onClick={this.onPressExportAllData}
-                                    showArrow={false}
-                                />
-                            ) : null}
-                            {this.state.isLoading === true ? (
-                                <InitialLoadingIndicator
-                                    loadingMessage={this.state.loadingMessage}
-                                />
-                            ) : null}
-
-                            <Subheader title={'Display Settings'} />
-                            <SettingsRow
-                                ref={this.unitRowRef}
-                                title="Unit"
-                                value={
-                                    unitTypes.find(
-                                        (t) =>
-                                            t.key ===
-                                            this.props.selectedUnitType,
-                                    ).label
-                                }
-                                onClick={this.onPressUnitRow}
-                            />
-
-                            {
-                                //support turning off the logs only in development mode
-                                __DEV__ === true ? (
-                                    <>
-                                        <Subheader title={'Logging'} />
-                                        <BooleanSettingsRow
-                                            title="Record Logs"
-                                            value={this.props.recordLogs}
-                                            onChange={this.onSetRecordLogs}
-                                        />
-                                        {this.props.recordLogs === true ? (
-                                            <BooleanSettingsRow
-                                                title="Record Screens"
-                                                value={this.props.recordScreens}
-                                                onChange={
-                                                    this.onSetRecordScreens
-                                                }
-                                            />
-                                        ) : null}
-
-                                        {this.props.loggingSessionId != null ? (
-                                            <>
-                                                <SettingsRow
-                                                    title="Clear the current logging session"
-                                                    subtitle={
-                                                        'Current session id: ' +
-                                                        this.props
-                                                            .loggingSessionId
-                                                    }
-                                                    onClick={
-                                                        this
-                                                            .onClearLoggingSession
-                                                    }
-                                                    showArrow={false}
-                                                />
-                                                <SettingsRow
-                                                    title="Export logs"
-                                                    onClick={
-                                                        this.onExportLogsClick
-                                                    }
-                                                    showArrow={false}
-                                                />
-                                            </>
-                                        ) : null}
-                                    </>
-                                ) : null
-                            }
-
-                            <Subheader title={'About'} />
-                            <AboutPanel
-                                containerStyle={{
-                                    paddingBottom:
-                                        Math.max(20, insets!.bottom) + 20,
-                                }}
-                            />
+                            
                         </ScrollView>
                     )}
                 </SafeAreaInsetsContext.Consumer>

@@ -73,6 +73,8 @@ class ExplorationInfoHelper {
       case ExplorationType.C_CyclicDetail_Range:
       case ExplorationType.C_TwoRanges:
         return ExplorationMode.Compare;
+      case ExplorationType.Comp:
+        return ExplorationMode.Comp;
     }
   }
 
@@ -123,6 +125,7 @@ class ExplorationInfoHelper {
       case ExplorationType.C_Cyclic:
       case ExplorationType.C_CyclicDetail_Daily:
       case ExplorationType.C_CyclicDetail_Range:
+      case ExplorationInfo.Comp: return "Comp";
       case ExplorationType.C_TwoRanges:
         {
           const spec = this.getDataSourceSpecInInfo(info)

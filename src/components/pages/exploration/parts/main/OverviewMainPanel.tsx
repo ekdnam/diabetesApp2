@@ -78,6 +78,8 @@ class OverviewMainPanel extends React.PureComponent<Props, State> {
         }
 
         if(this.props.data != null){
+            // We need to modify the this.props.data.sourceDataList here
+
             const viewableDataSources = this.props.data.sourceDataList.map(d => d.source)
             this.props.dispatchAction(memoUIStatus("viewableDataSources", viewableDataSources))
         }
@@ -167,13 +169,29 @@ class OverviewMainPanel extends React.PureComponent<Props, State> {
     }
 
 
-    private readonly renderItem = ({ item }: { item: OverviewSourceRow }) => <DataSourceChartFrame key={item.source.toString()}
+    private readonly renderItem = ({ item }: { item: OverviewSourceRow }) => {
+    console.log("@@@ In OverviewMainPanel.tsx - renderItem() - item ", item);
+    console.log("@@@ In OverviewMainPanel.tsx - renderItem() - item.source ", item.source);
+    console.log("@@@ In OverviewMainPanel.tsx - renderItem() - dataDrivenQuery ", this.props.dataDrivenQuery);
+    console.log("@@@ In OverviewMainPanel.tsx - renderItem() - highlightedDays ", this.props.data.highlightedDays);
+    console.log("@@@ In OverviewMainPanel.tsx - renderItem() - onHeaderPressed ", this.onHeaderPressed);
+    console.log("@@@ In OverviewMainPanel.tsx - renderItem() - onTodayPressed ", this.onTodayPressed);
+    try{
+        let dataSourceType = inferIntraDayDataSourceType(item.source);
+        console.log("### In OverviewMainPanel.tsx - renderItem() - dataSourceType ", dataSourceType);
+    }
+    catch(err)
+    {
+        console.log("### In OverviewMainPanel.tsx - renderItem() - exception thrown ", err);
+    }
+    return <DataSourceChartFrame key={item.source.toString()}
         data={item}
         filter={this.props.dataDrivenQuery}
         highlightedDays={this.props.data.highlightedDays}
         onHeaderPressed={this.onHeaderPressed}
         onTodayPressed={inferIntraDayDataSourceType(item.source) != null ? this.onTodayPressed : null}
     />
+    }
 
     private readonly keyExtractor = (item: OverviewSourceRow) => item.source
 
@@ -203,6 +221,7 @@ class OverviewMainPanel extends React.PureComponent<Props, State> {
     //===============================================================================================================
 
     render() {
+        console.log("%%% In OverviewMainPanel.tsx - in render() function ");
         if (this.props.data != null) {
             return <DateRangeScaleContext.Provider value={this.state.scaleX}>
                 {
@@ -222,7 +241,9 @@ class OverviewMainPanel extends React.PureComponent<Props, State> {
                     viewabilityConfig = {this.viewabilityConfig}
                     onViewableItemsChanged = {this.onViewableItemsChanged}
 
+                    /* sourceDataList: Array<OverviewSourceRow>; */
                     data={this.props.data.sourceDataList}
+
                     keyExtractor={this.keyExtractor}
                     ItemSeparatorComponent={this.Separator}
                     renderItem={this.renderItem}
@@ -238,9 +259,15 @@ class OverviewMainPanel extends React.PureComponent<Props, State> {
 
 
 function mapStateToProps(state: ReduxAppState, ownProps: Props): Props {
-
+    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function");
     const selectedService = DataServiceManager.instance.getServiceByKey(state.settingsState.serviceKey)
-
+    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state = ", state);
+    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - ownProps = ", ownProps);
+    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - selectedService = ", selectedService);
+    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationDataState.isBusy = ", state.explorationDataState.isBusy);
+    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationDataState.data = ", state.explorationDataState.data);
+    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationState.uiStatus.overviewScrollY = ", state.explorationState.uiStatus.overviewScrollY);
+    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationState.info.dataDrivenQuery = ", state.explorationState.info.dataDrivenQuery);
     return {
         ...ownProps,
         isLoading: state.explorationDataState.isBusy,
@@ -252,6 +279,7 @@ function mapStateToProps(state: ReduxAppState, ownProps: Props): Props {
 }
 
 function mapDispatchToProps(dispatch: ThunkDispatch<{}, {}, any>, ownProps: Props): Props {
+    console.log("$$$ In OverviewMainPanel.tsx - mapDispatchToProps() function");
     return {
         ...ownProps,
         dispatchAction: (action) => dispatch(action),

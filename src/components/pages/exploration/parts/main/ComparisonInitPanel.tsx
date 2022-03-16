@@ -54,7 +54,7 @@ function inferRange(info: ExplorationInfo): [number, number] {
 
 export const ComparisonInitPanel = (props: { info: ExplorationInfo, onCompleted?: () => void }) => {
 
-    const [dataSource, setDataSource] = useState<DataSourceType>(explorationInfoHelper.getParameterValue(props.info, ParameterType.DataSource) || DataSourceType.StepCount)
+    const [dataSource, setDataSource] = useState<DataSourceType>(explorationInfoHelper.getParameterValue(props.info, ParameterType.DataSource) || DataSourceType.BloodGlucose)
     const [cycleType, setCycleType] = useState<CyclicTimeFrame | "compareTwoRanges">(
         explorationInfoHelper.getParameterValue(props.info, ParameterType.CycleType) || (props.info.type === ExplorationType.C_TwoRanges ? "compareTwoRanges" : CyclicTimeFrame.DayOfWeek))
     const [rangeA, setRangeA] = useState<[number, number]>(explorationInfoHelper.getParameterValue(props.info, ParameterType.Range) || inferRange(props.info))

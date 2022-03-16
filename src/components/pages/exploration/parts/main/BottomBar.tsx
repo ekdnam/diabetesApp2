@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, StyleSheet, Dimensions, TouchableOpacity, Text, Platform } from 'react-native';
+import { View, SafeAreaView, StyleSheet, Dimensions, TouchableOpacity, Text, Platform, TextInput } from 'react-native';
 import Colors from '@style/Colors';
 import { Sizes, sizeByScreen } from '@style/Sizes';
 import { StyleTemplates } from '@style/Styles';
@@ -53,7 +53,54 @@ const Styles = StyleSheet.create({
         left: Math.round((Dimensions.get('window').width - Sizes.speechInputButtonSize) / 2),
         zIndex: ZIndices.Footer
     },
+
+
 })
+
+
+
+const styles = StyleSheet.create({
+container: {
+    justifyContent: 'center',
+    flex:1,
+    margin: 10
+
+  },
+
+TextInputStyleClass: {
+
+textAlign: 'center',
+height: 50,
+borderWidth: 2,
+borderColor: '#276FBF',
+borderRadius: 20 ,
+backgroundColor : "#FFFFFF",
+marginLeft : 25,
+marginRight : 25,
+marginTop :  23,
+width : 15
+},
+
+buttonStyleClass : {
+borderRadius: 50,
+marginTop: 50,
+marginBottom : 25,
+marginLeft : 25,
+marginRight : 25,
+height: 40,
+backgroundColor : '#276FBF',
+alignItems: "center",
+},
+
+ buttonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop : 10
+    }
+
+});
 
 interface Props {
     mode: ExplorationMode,
@@ -69,11 +116,14 @@ export const BottomBar = (props: Props) => {
 
     return <View style={Styles.bottomBarContainerStyle} removeClippedSubviews={false}>
         <SafeAreaView style={Styles.bottomBarInnerListStyle}>
-            <BottomBarButton isOn={props.mode === 'browse'} title="Home" mode={ExplorationMode.Browse} onPress={() => { props.onModePress(ExplorationMode.Browse) }} />
+
+                       <BottomBarButton isOn={props.mode === 'browse'} title="Home" mode={ExplorationMode.Browse} onPress={() => { props.onModePress(ExplorationMode.Browse) }} />
             <BottomBarButton isOn={props.mode === 'compare'} title="Compare" mode={ExplorationMode.Compare} onPress={() => { props.onModePress(ExplorationMode.Compare) }} />
             <View style={Styles.bottomBarVoiceButtonContainerStyle}>
                 <VoiceInputButton isBusy={speechSessionStatus === SpeechRecognizerSessionStatus.Analyzing} onTouchDown={props.onVoiceButtonPressIn} onTouchUp={props.onVoiceButtonPressOut} />
             </View>
+
+
         </SafeAreaView>
     </View>
 }

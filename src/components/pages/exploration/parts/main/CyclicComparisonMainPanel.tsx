@@ -60,6 +60,13 @@ class CyclicComparisonMainPanel extends React.PureComponent<Props> {
         switch (this.props.source) {
             case DataSourceType.StepCount:
                 return <SingleValueCyclicChart dataSource={this.props.source} values={this.props.data.data as any} preferredValueRange={this.props.data.preferredValueRange} cycleType={this.props.cycleType} startFromZero={true} yTickFormat={commaNumber} />
+            case DataSourceType.BloodGlucose:
+                console.log("BBB In CyclicComparisonMainPanel.tsx - makeMainView() - this.props.source = ", this.props.source);
+                console.log("BBB In CyclicComparisonMainPanel.tsx - makeMainView() - values = ", this.props.data.data);
+                console.log("BBB In CyclicComparisonMainPanel.tsx - makeMainView() - preferredValueRange = ", this.props.data.preferredValueRange);
+                console.log("BBB In CyclicComparisonMainPanel.tsx - makeMainView() - this.props.source = ", this.props.cycleType);
+                console.log("BBB In CyclicComparisonMainPanel.tsx - makeMainView() - yTickFormat = ", commaNumber);
+                return <SingleValueCyclicChart dataSource={this.props.source} values={this.props.data.data as any} preferredValueRange={this.props.data.preferredValueRange} cycleType={this.props.cycleType} startFromZero={true} yTickFormat={commaNumber} />
             case DataSourceType.HeartRate:
                 return <SingleValueCyclicChart dataSource={this.props.source} values={this.props.data.data as any} preferredValueRange={this.props.data.preferredValueRange} cycleType={this.props.cycleType} startFromZero={false} />
             case DataSourceType.HoursSlept:
@@ -70,7 +77,7 @@ class CyclicComparisonMainPanel extends React.PureComponent<Props> {
                         return scale.ticks().map(t => t * 3600)
                     }}
                 />
-            case DataSourceType.Weight:
+            /*case DataSourceType.Weight:
                 return <SingleValueCyclicChart
                     dataSource={this.props.source}
                     values={this.props.data.data as any}

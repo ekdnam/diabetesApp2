@@ -408,7 +408,7 @@ class TooltipOverlay extends React.PureComponent<Props, State>{
                                     valueText = `${format(bedTime, "hh:mm a")} - ${format(wakeTime, "hh:mm a")}`.toLowerCase()
                                 }
                                 break;*/
-                            case DataSourceType.Weight:
+                            /*case DataSourceType.Weight:
                                 switch (this.props.measureUnitType) {
                                     case MeasureUnitType.Metric:
                                         valueText = `${touchingInfo.value.toFixed(1)} kg (trend)`
@@ -417,7 +417,7 @@ class TooltipOverlay extends React.PureComponent<Props, State>{
                                         valueText = `${unitConvert(touchingInfo.value).from('kg').to('lb').toFixed(1)} lb (trend)`
                                         break;
                                 }
-                                break;
+                                break;*/
                         }
                     } else {
                         valueText = "No value"
@@ -476,7 +476,7 @@ class TooltipOverlay extends React.PureComponent<Props, State>{
                                 sumText = DateTimeHelper.formatDuration(touchingInfo.value.sum, true)
                                 break;
 
-                            case DataSourceType.Weight:
+                            /*case DataSourceType.Weight:
                                 switch (this.props.measureUnitType) {
                                     case MeasureUnitType.Metric:
                                         valueDef = [{ type: "digit", text: touchingInfo.value.avg.toFixed(1) }, { type: 'unit', text: 'kg' }]

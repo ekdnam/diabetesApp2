@@ -115,7 +115,7 @@ export interface StepCountIntraDayData {
   hourlySteps: Array<IIntraDayStepCountLog>;
 }
 
-export interface RestingHeartRateRangedData extends OverviewSourceRow {
+/*export interface RestingHeartRateRangedData extends OverviewSourceRow {
   data: Array<IDailySummaryEntry>;
 }
 
@@ -132,16 +132,16 @@ export enum HeartRateZone {
   FatBurn = 'fat_burn',
   Cardio = 'cardio',
   OutOfRange = 'out',
-}
+}*/
 
-export interface HeartRateIntraDayData {
+/*export interface HeartRateIntraDayData {
   points: Array<IIntraDayHeartRatePoint>;
   restingHeartRate: number;
   zones: Array<HeartRateZoneInfo>;
   customZones: Array<HeartRateZoneInfo>;
 }
 
-export interface WeightRangedData extends OverviewSourceRow {
+/*export interface WeightRangedData extends OverviewSourceRow {
   data: {
     trend: Array<IDailySummaryEntry>;
     logs: Array<IWeightIntraDayLogEntry>;

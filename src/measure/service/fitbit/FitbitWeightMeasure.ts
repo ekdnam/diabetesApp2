@@ -29,6 +29,7 @@ export class FitbitWeightMeasure extends FitbitServiceMeasure {
 
 
   protected async getBoxPlotInfoOfDatasetFromDb(): Promise<BoxPlotInfo> {
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA returning from getBoxPlotInfoOfDatasetFromDb() from FitbitWeightMeasure.ts ");
     return this.core.fitbitLocalDbManager.getBoxplotInfo(FitbitLocalTableName.WeightTrend)
   }
 

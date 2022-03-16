@@ -23,12 +23,6 @@ import { ReduxAppState } from '@state/types'
 import { getNumberSequence, clamp } from '@data-at-hand/core/utils'
 import { Button } from 'react-native-elements'
 
-const HEART_RATE_RANGE = getNumberSequence(0, 150)
-const HEART_RATE_RANGE_TEXTS = HEART_RATE_RANGE.map(v => `${v.toString()} bpm`)
-
-const WEIGHT_RANGE = getNumberSequence(0, 250)
-const WEIGHT_RANGE_TEXTS_KG = WEIGHT_RANGE.map(v => `${v.toString()} kg`)
-const WEIGHT_RANGE_TEXTS_LB = WEIGHT_RANGE.map(v => `${v.toString()} lb`)
 
 
 
@@ -36,11 +30,7 @@ const WEIGHT_RANGE_TEXTS_LB = WEIGHT_RANGE.map(v => `${v.toString()} lb`)
 type SpecType = { dataSourceType: DataSourceType, propertyKey?: string | null, label: string, presets?: number[] | ((unit: MeasureUnitType) => number[]) }
 const dataSourceSpecs: Array<SpecType> = [
     { dataSourceType: DataSourceType.StepCount, propertyKey: undefined, label: DataSourceManager.instance.getSpec(DataSourceType.StepCount).name, presets: [5000, 10000, 20000] },
-    { dataSourceType: DataSourceType.HeartRate, propertyKey: undefined, label: "Resting HR", presets: [60, 80, 100] },
-    //{ dataSourceType: DataSourceType.HoursSlept, propertyKey: undefined, label: DataSourceManager.instance.getSpec(DataSourceType.HoursSlept).name, presets: [4 * 3600, 6 * 3600, 8 * 3600, 10 * 3600] },
-    //{ dataSourceType: DataSourceType.SleepRange, propertyKey: "waketime", label: "Wake Time", presets: [7 * 3600, 9 * 3600, 10 * 3600] },
-    //{ dataSourceType: DataSourceType.SleepRange, propertyKey: "bedtime", label: "Bedtime", presets: [-2 * 3600, 0, 1 * 3600] },
-    { dataSourceType: DataSourceType.Weight, propertyKey: undefined, label: DataSourceManager.instance.getSpec(DataSourceType.Weight).name },
+
 ]
 
 function getComparisonLabel(type: NumericConditionType, dataSource: DataSourceType): string {
@@ -53,38 +43,7 @@ function getComparisonLabel(type: NumericConditionType, dataSource: DataSourceTy
                 case NumericConditionType.Max: return "maximum"
             }
             break;
-        case DataSourceType.HeartRate:
-            switch (type) {
-                case NumericConditionType.Less: return "slower than"
-                case NumericConditionType.More: return "faster than"
-                case NumericConditionType.Min: return "minimum"
-                case NumericConditionType.Max: return "maximum"
-            }
-            break;
-        /*case DataSourceType.SleepRange:
-            switch (type) {
-                case NumericConditionType.Less: return "earlier than"
-                case NumericConditionType.More: return "later than"
-                case NumericConditionType.Min: return "earliest"
-                case NumericConditionType.Max: return "latest"
-            }
-            break;
-        case DataSourceType.HoursSlept:
-            switch (type) {
-                case NumericConditionType.Less: return "shorter than"
-                case NumericConditionType.More: return "longer than"
-                case NumericConditionType.Min: return "shortest"
-                case NumericConditionType.Max: return "longest"
-            }
-            break;*/
-        case DataSourceType.Weight:
-            switch (type) {
-                case NumericConditionType.Less: return "ligher than"
-                case NumericConditionType.More: return "heavier than"
-                case NumericConditionType.Min: return "minimum"
-                case NumericConditionType.Max: return "maximum"
-            }
-            break;
+
 
     }
 }
@@ -92,15 +51,6 @@ function getComparisonLabel(type: NumericConditionType, dataSource: DataSourceTy
 function getDefaultReference(dataSource: DataSourceType, propertyKey: string | undefined): number {
     switch (dataSource) {
         case DataSourceType.StepCount: return 10000
-        case DataSourceType.HeartRate: return 80
-        /*case DataSourceType.SleepRange:
-            switch (propertyKey) {
-                case 'waketime': return 8 * 3600
-                case 'bedtime': return 0
-            }
-        case DataSourceType.HoursSlept: return 6 * 3600*/
-        case DataSourceType.Weight: return 70
-            break;
 
     }
 }
@@ -239,29 +189,7 @@ export const DataDrivenQueryBar = React.memo((props: {
         switch (props.filter.dataSource) {
             case DataSourceType.StepCount:
                 return commaNumber(value)
-            /*case DataSourceType.SleepRange: {
-                const time = addSeconds(pivot, value)
-                switch (getHours(time)) {
-                    case 0:
-                    case 24:
-                        return "Midnight"
-                    case 12: return "Noon"
-                    default: return format(time, "hh:mm a")
-                }
-            }
-            case DataSourceType.HoursSlept:
-                return DateTimeHelper.formatDuration(value, true)*/
-            case DataSourceType.HeartRate:
-                return `${value} bpm`
-            case DataSourceType.Weight:
-                {
-                    switch (measureUnitType) {
-                        case MeasureUnitType.Metric:
-                            return `${Math.round(value)} kg`
-                        case MeasureUnitType.US:
-                            return `${Math.round(value)} lb`
-                    }
-                }
+
             default: return value.toString()
         }
     }, [props.filter.dataSource, measureUnitType])
@@ -381,7 +309,7 @@ export const DataDrivenQueryBar = React.memo((props: {
                         onItemSelected={heartRateInputChange}
                     />
                 }
-            case DataSourceType.Weight:
+           /* case DataSourceType.Weight:
 
                 {
                     let labels;
@@ -406,7 +334,7 @@ export const DataDrivenQueryBar = React.memo((props: {
                             setInputReferenceValue(DataSourceManager.instance.convertValueReverse(selectedNumber, DataSourceType.Weight, measureUnitType))
                         }}
                     />
-                }
+                }*/
 
             default: return <Dialog.Input
                 style={Platform.OS === 'android' ? styles.textInputAndroidStyle : undefined}
