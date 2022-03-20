@@ -24,6 +24,8 @@ import {InitialLoadingIndicator} from '@components/pages/exploration/parts/main/
 import {StackNavigationProp} from '@react-navigation/stack';
 import {SettingsSteckParamList} from '@components/Routes';
 import {resetAction} from '@state/exploration/interaction/actions';
+import SQLite, { DatabaseParams } from 'react-native-sqlite-storage';
+import { format, toDate } from 'date-fns'
 
 interface Prop {
     navigation: StackNavigationProp<
@@ -40,6 +42,7 @@ interface State {
     isLoading: boolean;
     loadingMessage?: string;
     text?: string;
+    userDate?: string
 }
 
 // TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
@@ -59,6 +62,7 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
             isLoading: false,
             loadingMessage: null,
             text: '',
+            userDate: ''
         };
     }
 
@@ -98,8 +102,34 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
                         console.log(this.state.text);
                         var x = "Your BG level is " + this.state.text;
                         Alert.alert(x);
+                        insertRecordToDB(this.state.text);
                     }} style={styles.appButtonContainer}>
                     <Text style={styles.appButtonText}>Submit</Text>
+                </TouchableOpacity>
+                <TextInput
+                    style = {{
+                        borderStartWidth : 2,
+                        borderEndWidth : 3,
+                        borderTopWidth : 1,
+                        borderLeftWidth : 2,
+                        borderRightWidth: 3,
+                        borderBottomWidth : 4,
+                        borderWidth : 1,
+                        borderColor : 'grey'
+                        }}
+                    placeholder="Date"
+                    onChangeText={(userDate) => this.setState({userDate})}
+                    value={this.state.userDate}
+                />
+                <TouchableOpacity onPress={() => {
+                        console.log(this.state.userDate);
+                        var x = "Your BG level is " + this.state.text;
+                        var y = 'Your date: ' + this.state.userDate;
+                        Alert.alert(x);
+                        Alert.alert(y);
+                        insertRecordToDBWithDate(this.state.text, this.state.userDate);
+                    }} style={styles.appButtonContainer}>
+                    <Text style={styles.appButtonText}>Submit with Date</Text>
                 </TouchableOpacity>
                 {/* <ScrollView style={{ flex: 1 }}>
                     {
@@ -164,6 +194,65 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
             </SafeAreaView>
         );
     }
+}
+
+function openDB(): Promise<SQLite.SQLiteDatabase> {
+
+    console.log("try open the database:", );
+
+    _dbInitPromise = SQLite.openDatabase({ name: 'fitbit-local-cache.sqlite' })
+      .then(db => {
+        console.log("db opened.")
+        return db
+          .transaction(tx => {
+          }).then(tx => db)
+      })
+    return _dbInitPromise
+  }
+
+ const insertRecordToDB = async (bgvalue: any) => {
+    // await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 2, 2, 20220215, 127, 2022]);
+    // 'INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 2, 2, 20220215, 127, 2022]);
+    const todayDate = new Date();
+    const dayOfWeek = todayDate.getDay();
+    console.log(`dayOfWeek: ${dayOfWeek}| type: ${typeof(dayOfWeek)}`);
+    const month = todayDate.getMonth();
+    // console.log(typeof(month));
+    console.log(`month: ${month}| type: ${typeof(month)}`);
+    const numberedDate = parseInt(todayDate.toISOString().split('T')[0].replaceAll('-', ''));
+    console.log(`numberedDate: ${numberedDate}| type: ${typeof(numberedDate)}`);
+    const year = todayDate.getFullYear();
+    console.log(`year: ${year}| type: ${typeof(year)}`);
+    const bgValueAsNumber = parseInt(bgvalue);
+    console.log(`bgValueAsNumber: ${bgValueAsNumber}| type: ${typeof(bgValueAsNumber)}`);
+    await (await openDB()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ dayOfWeek, month, numberedDate, bgValueAsNumber, year])
+    // await (await openDB()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 2, 20220320, 120, 2022])
+
+    console.log('data inserted to database');
+}
+
+const insertRecordToDBWithDate = async (bgvalue: any, userDate: any) => {
+    const dateSplits = userDate.split('-');
+    const ourYear = parseInt(dateSplits[0]);
+    const ourMonth = parseInt(dateSplits[1]);
+    const ourDay = parseInt(dateSplits[2]);
+    const ourDate = new Date(ourYear, ourMonth - 1, ourDay);
+    console.log(ourDate);
+    const dayOfWeek = ourDate.getDay();
+    console.log(`dayOfWeek: ${dayOfWeek}| type: ${typeof(dayOfWeek)}`);
+    const month = ourDate.getMonth();
+    // console.log(typeof(month));
+    console.log(`month: ${month}| type: ${typeof(month)}`);
+    const numberedDate = parseInt(ourDate.toISOString().split('T')[0].replaceAll('-', ''));
+    console.log(`numberedDate: ${numberedDate}| type: ${typeof(numberedDate)}`);
+    const year = ourDate.getFullYear();
+    console.log(`year: ${year}| type: ${typeof(year)}`);
+    const bgValueAsNumber = parseInt(bgvalue);
+    console.log(`bgValueAsNumber: ${bgValueAsNumber}| type: ${typeof(bgValueAsNumber)}`);
+    await (await openDB()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ dayOfWeek, month, numberedDate, bgValueAsNumber, year])
+    // await (await openDB()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 2, 20220320, 120, 2022])
+
+    console.log('data inserted to database');
 }
 
 function mapStateToPropsScreen(appState: ReduxAppState, ownProps: Prop): Prop {

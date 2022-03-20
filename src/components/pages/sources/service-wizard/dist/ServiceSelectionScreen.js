@@ -71,6 +71,7 @@ var react_redux_1 = require("react-redux");
 var actions_1 = require("@state/settings/actions");
 var InitialLoadingIndicator_1 = require("@components/pages/exploration/parts/main/InitialLoadingIndicator");
 var actions_2 = require("@state/exploration/interaction/actions");
+var react_native_sqlite_storage_1 = require("react-native-sqlite-storage");
 // TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 // const AppButton = ({ onPress: any, title: any }) => (
 //   <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
@@ -85,7 +86,8 @@ var ServiceSelectionScreen = /** @class */ (function (_super) {
             services: [],
             isLoading: false,
             loadingMessage: null,
-            text: ''
+            text: '',
+            userDate: ''
         };
         return _this;
     }
@@ -125,12 +127,106 @@ var ServiceSelectionScreen = /** @class */ (function (_super) {
                     console.log(_this.state.text);
                     var x = "Your BG level is " + _this.state.text;
                     react_native_1.Alert.alert(x);
+                    insertRecordToDB(_this.state.text);
                 }, style: styles.appButtonContainer },
                 react_1["default"].createElement(react_native_1.Text, { style: styles.appButtonText }, "Submit")),
+            react_1["default"].createElement(react_native_1.TextInput, { style: {
+                    borderStartWidth: 2,
+                    borderEndWidth: 3,
+                    borderTopWidth: 1,
+                    borderLeftWidth: 2,
+                    borderRightWidth: 3,
+                    borderBottomWidth: 4,
+                    borderWidth: 1,
+                    borderColor: 'grey'
+                }, placeholder: "Date", onChangeText: function (userDate) { return _this.setState({ userDate: userDate }); }, value: this.state.userDate }),
+            react_1["default"].createElement(react_native_1.TouchableOpacity, { onPress: function () {
+                    console.log(_this.state.userDate);
+                    var x = "Your BG level is " + _this.state.text;
+                    var y = 'Your date: ' + _this.state.userDate;
+                    react_native_1.Alert.alert(x);
+                    react_native_1.Alert.alert(y);
+                    insertRecordToDBWithDate(_this.state.text, _this.state.userDate);
+                }, style: styles.appButtonContainer },
+                react_1["default"].createElement(react_native_1.Text, { style: styles.appButtonText }, "Submit with Date")),
             this.state.isLoading === true ? (react_1["default"].createElement(InitialLoadingIndicator_1.InitialLoadingIndicator, { loadingMessage: this.state.loadingMessage })) : null));
     };
     return ServiceSelectionScreen;
 }(react_1["default"].Component));
+function openDB() {
+    console.log("try open the database:");
+    _dbInitPromise = react_native_sqlite_storage_1["default"].openDatabase({ name: 'fitbit-local-cache.sqlite' })
+        .then(function (db) {
+        console.log("db opened.");
+        return db
+            .transaction(function (tx) {
+        }).then(function (tx) { return db; });
+    });
+    return _dbInitPromise;
+}
+var insertRecordToDB = function (bgvalue) { return __awaiter(void 0, void 0, void 0, function () {
+    var todayDate, dayOfWeek, month, numberedDate, year, bgValueAsNumber;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                todayDate = new Date();
+                dayOfWeek = todayDate.getDay();
+                console.log("dayOfWeek: " + dayOfWeek + "| type: " + typeof (dayOfWeek));
+                month = todayDate.getMonth();
+                // console.log(typeof(month));
+                console.log("month: " + month + "| type: " + typeof (month));
+                numberedDate = parseInt(todayDate.toISOString().split('T')[0].replaceAll('-', ''));
+                console.log("numberedDate: " + numberedDate + "| type: " + typeof (numberedDate));
+                year = todayDate.getFullYear();
+                console.log("year: " + year + "| type: " + typeof (year));
+                bgValueAsNumber = parseInt(bgvalue);
+                console.log("bgValueAsNumber: " + bgValueAsNumber + "| type: " + typeof (bgValueAsNumber));
+                return [4 /*yield*/, openDB()];
+            case 1: return [4 /*yield*/, (_a.sent()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [dayOfWeek, month, numberedDate, bgValueAsNumber, year])
+                // await (await openDB()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 2, 20220320, 120, 2022])
+            ];
+            case 2:
+                _a.sent();
+                // await (await openDB()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 2, 20220320, 120, 2022])
+                console.log('data inserted to database');
+                return [2 /*return*/];
+        }
+    });
+}); };
+var insertRecordToDBWithDate = function (bgvalue, userDate) { return __awaiter(void 0, void 0, void 0, function () {
+    var dateSplits, ourYear, ourMonth, ourDay, ourDate, dayOfWeek, month, numberedDate, year, bgValueAsNumber;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                dateSplits = userDate.split('-');
+                ourYear = parseInt(dateSplits[0]);
+                ourMonth = parseInt(dateSplits[1]);
+                ourDay = parseInt(dateSplits[2]);
+                ourDate = new Date(ourYear, ourMonth - 1, ourDay);
+                console.log(ourDate);
+                dayOfWeek = ourDate.getDay();
+                console.log("dayOfWeek: " + dayOfWeek + "| type: " + typeof (dayOfWeek));
+                month = ourDate.getMonth();
+                // console.log(typeof(month));
+                console.log("month: " + month + "| type: " + typeof (month));
+                numberedDate = parseInt(ourDate.toISOString().split('T')[0].replaceAll('-', ''));
+                console.log("numberedDate: " + numberedDate + "| type: " + typeof (numberedDate));
+                year = ourDate.getFullYear();
+                console.log("year: " + year + "| type: " + typeof (year));
+                bgValueAsNumber = parseInt(bgvalue);
+                console.log("bgValueAsNumber: " + bgValueAsNumber + "| type: " + typeof (bgValueAsNumber));
+                return [4 /*yield*/, openDB()];
+            case 1: return [4 /*yield*/, (_a.sent()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [dayOfWeek, month, numberedDate, bgValueAsNumber, year])
+                // await (await openDB()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 2, 20220320, 120, 2022])
+            ];
+            case 2:
+                _a.sent();
+                // await (await openDB()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 2, 20220320, 120, 2022])
+                console.log('data inserted to database');
+                return [2 /*return*/];
+        }
+    });
+}); };
 function mapStateToPropsScreen(appState, ownProps) {
     return __assign(__assign({}, ownProps), { selectedServiceKey: appState.settingsState.serviceKey });
 }
