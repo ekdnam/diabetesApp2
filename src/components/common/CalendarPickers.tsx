@@ -63,8 +63,8 @@ export const DatePicker = (props: {
 }) => {
 
     const serviceKey = useSelector((appState: ReduxAppState) => appState.settingsState.serviceKey)
-    const today = DataServiceManager.instance.getServiceByKey(serviceKey).getToday()
-
+    // const today = DataServiceManager.instance.getServiceByKey(serviceKey).getToday()
+    const today = new Date();
     const markedDates: any = {}
     if (props.selectedDay) {
         markedDates[formatDate(props.selectedDay)] = { selected: true }
@@ -105,8 +105,8 @@ const selectedWeekRangeMarkInfoBase = {
 
 export const WeekPicker = (props: { selectedWeekFirstDay: Date, onWeekSelected?: (weekFirstDay: Date, weekEndDay: Date) => void }) => {
     const serviceKey = useSelector((appState: ReduxAppState) => appState.settingsState.serviceKey)
-    const today = DataServiceManager.instance.getServiceByKey(serviceKey).getToday()
-
+    // const today = DataServiceManager.instance.getServiceByKey(serviceKey).getToday()
+    const today = new Date();
     const markedDates: any = {}
 
     if (props.selectedWeekFirstDay) {
@@ -285,9 +285,13 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: MonthPickerProps): Mon
 function mapStateToProps(appState: ReduxAppState, ownProps: MonthPickerProps): MonthPickerProps {
     return {
         ...ownProps,
-        getToday: DataServiceManager.instance.getServiceByKey(appState.settingsState.serviceKey).getToday
-    }
+        getToday: getTodayDate
+        }
+function getTodayDate() {
+    return new Date();
 }
+}
+
 
 
 const connected = connect(mapStateToProps, mapDispatchToProps)(MonthPicker)

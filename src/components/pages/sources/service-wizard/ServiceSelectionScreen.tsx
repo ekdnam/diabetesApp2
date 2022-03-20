@@ -172,7 +172,9 @@ function mapStateToPropsScreen(appState: ReduxAppState, ownProps: Prop): Prop {
         selectedServiceKey: appState.settingsState.serviceKey,
     };
 }
-
+const getTodayNew = () => {
+    return new Date();
+}
 function mapDispatchToPropsScreen(dispatch: Dispatch, ownProps: Prop): Prop {
     return {
         ...ownProps,
@@ -180,7 +182,7 @@ function mapDispatchToPropsScreen(dispatch: Dispatch, ownProps: Prop): Prop {
             dispatch(setService(key));
             dispatch(
                 resetAction(
-                    DataServiceManager.instance.getServiceByKey(key).getToday(),
+                    getTodayNew(),
                 ),
             );
         },

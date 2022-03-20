@@ -71,12 +71,6 @@ var react_redux_1 = require("react-redux");
 var actions_1 = require("@state/settings/actions");
 var InitialLoadingIndicator_1 = require("@components/pages/exploration/parts/main/InitialLoadingIndicator");
 var actions_2 = require("@state/exploration/interaction/actions");
-// TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
-// const AppButton = ({ onPress: any, title: any }) => (
-//   <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
-//     <Text style={styles.appButtonText}>{title}</Text>
-//   </TouchableOpacity>
-// );
 var ServiceSelectionScreen = /** @class */ (function (_super) {
     __extends(ServiceSelectionScreen, _super);
     function ServiceSelectionScreen(props) {
@@ -84,8 +78,7 @@ var ServiceSelectionScreen = /** @class */ (function (_super) {
         _this.state = {
             services: [],
             isLoading: false,
-            loadingMessage: null,
-            text: ''
+            loadingMessage: null
         };
         return _this;
     }
@@ -106,28 +99,51 @@ var ServiceSelectionScreen = /** @class */ (function (_super) {
     ServiceSelectionScreen.prototype.render = function () {
         var _this = this;
         return (react_1["default"].createElement(react_native_1.SafeAreaView, { style: {
-                flex: 1,
-                flexDirection: 'column',
-                alignItems: 'stretch'
+                flex: 1, flexDirection: 'column', alignItems: 'stretch'
             } },
-            react_1["default"].createElement(react_native_1.Text, null, "Insert BG level"),
-            react_1["default"].createElement(react_native_1.TextInput, { style: {
-                    borderStartWidth: 2,
-                    borderEndWidth: 3,
-                    borderTopWidth: 1,
-                    borderLeftWidth: 2,
-                    borderRightWidth: 3,
-                    borderBottomWidth: 4,
-                    borderWidth: 1,
-                    borderColor: 'grey'
-                }, placeholder: "Enter BG level here", onChangeText: function (text) { return _this.setState({ text: text }); }, value: this.state.text }),
-            react_1["default"].createElement(react_native_1.TouchableOpacity, { onPress: function () {
-                    console.log(_this.state.text);
-                    var x = "Your BG level is " + _this.state.text;
-                    react_native_1.Alert.alert(x);
-                }, style: styles.appButtonContainer },
-                react_1["default"].createElement(react_native_1.Text, { style: styles.appButtonText }, "Submit")),
-            this.state.isLoading === true ? (react_1["default"].createElement(InitialLoadingIndicator_1.InitialLoadingIndicator, { loadingMessage: this.state.loadingMessage })) : null));
+            react_1["default"].createElement(react_native_1.ScrollView, { style: { flex: 1 } }, this.state.services
+                .map(function (service, index) { return react_1["default"].createElement(ServiceElement, { key: service.key, index: index, selectedAlready: _this.props.selectedServiceKey === service.key, source: service, onSelected: function () { return __awaiter(_this, void 0, void 0, function () {
+                    var activationResult, err_1;
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                if (!(this.props.selectedServiceKey != service.key)) return [3 /*break*/, 5];
+                                console.log("start loading");
+                                react_native_1.InteractionManager.runAfterInteractions(function () {
+                                });
+                                requestAnimationFrame(function () {
+                                    _this.setState(__assign(__assign({}, _this.state), { isLoading: true }));
+                                });
+                                _a.label = 1;
+                            case 1:
+                                _a.trys.push([1, 3, 4, 5]);
+                                console.log("start activation of new service..");
+                                return [4 /*yield*/, DataServiceManager_1.DataServiceManager.instance.getServiceByKey(service.key).activateInSystem(function (progressInfo) {
+                                        _this.setState(__assign(__assign({}, _this.state), { loadingMessage: progressInfo.message }));
+                                    })];
+                            case 2:
+                                activationResult = _a.sent();
+                                console.log("finished the activation of new service.");
+                                if (activationResult.success === true) {
+                                    //await DataServiceManager.instance.getServiceByKey(this.props.selectedServiceKey).deactivatedInSystem()
+                                    this.props.selectService(service.key);
+                                }
+                                return [3 /*break*/, 5];
+                            case 3:
+                                err_1 = _a.sent();
+                                console.error("Failed to sign in to ", service.key, err_1);
+                                return [3 /*break*/, 5];
+                            case 4:
+                                console.log("finish loading");
+                                this.setState(__assign(__assign({}, this.state), { isLoading: false, loadingMessage: null }));
+                                this.props.navigation.goBack();
+                                return [7 /*endfinally*/];
+                            case 5: return [2 /*return*/];
+                        }
+                    });
+                }); } }); })),
+            this.state.isLoading === true ? react_1["default"].createElement(InitialLoadingIndicator_1.InitialLoadingIndicator, { loadingMessage: this.state.loadingMessage }) : null));
     };
     return ServiceSelectionScreen;
 }(react_1["default"].Component));
@@ -146,7 +162,7 @@ function mapDispatchToPropsScreen(dispatch, ownProps) {
 var connectedServiceSelectionScreen = react_redux_1.connect(mapStateToPropsScreen, mapDispatchToPropsScreen)(ServiceSelectionScreen);
 exports.ServiceSelectionScreen = connectedServiceSelectionScreen;
 var ServiceElement = function (props) {
-    return (react_1["default"].createElement(react_native_1.TouchableOpacity, { disabled: props.selectedAlready, style: {
+    return react_1["default"].createElement(react_native_1.TouchableOpacity, { disabled: props.selectedAlready, style: {
             marginTop: 24,
             marginRight: 20,
             marginLeft: 20
@@ -165,40 +181,7 @@ var ServiceElement = function (props) {
                     opacity: props.selectedAlready === true ? 0.5 : 1
                 }, imageStyle: { borderRadius: 12 }, source: props.source.thumbnail },
                 react_1["default"].createElement(react_native_1.Text, { style: __assign(__assign({}, Styles_1.StyleTemplates.titleTextStyle), { fontSize: 36, alignContent: 'center', fontWeight: '600', color: Colors_1["default"].WHITE }) }, props.source.name)),
-            props.selectedAlready === true ? (react_1["default"].createElement(react_native_1.View, { style: {
-                    position: 'absolute',
-                    right: 12,
-                    top: 8,
-                    backgroundColor: Colors_1["default"].accent,
-                    borderRadius: 12,
-                    padding: 4,
-                    paddingLeft: 8,
-                    paddingRight: 8
-                } },
-                react_1["default"].createElement(react_native_1.Text, { style: {
-                        fontSize: Sizes_1.Sizes.descriptionFontSize,
-                        fontWeight: 'bold',
-                        color: Colors_1["default"].WHITE
-                    } }, "Already Selected"))) : (react_1["default"].createElement(react_1["default"].Fragment, null)))));
+            props.selectedAlready === true ?
+                (react_1["default"].createElement(react_native_1.View, { style: { position: 'absolute', right: 12, top: 8, backgroundColor: Colors_1["default"].accent, borderRadius: 12, padding: 4, paddingLeft: 8, paddingRight: 8 } },
+                    react_1["default"].createElement(react_native_1.Text, { style: { fontSize: Sizes_1.Sizes.descriptionFontSize, fontWeight: 'bold', color: Colors_1["default"].WHITE } }, "Already Selected"))) : (react_1["default"].createElement(react_1["default"].Fragment, null))));
 };
-var styles = react_native_1.StyleSheet.create({
-    screenContainer: {
-        flex: 1,
-        justifyContent: "center",
-        padding: 16
-    },
-    appButtonContainer: {
-        elevation: 8,
-        backgroundColor: "#009688",
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 12
-    },
-    appButtonText: {
-        fontSize: 18,
-        color: "#fff",
-        fontWeight: "bold",
-        alignSelf: "center",
-        textTransform: "uppercase"
-    }
-});

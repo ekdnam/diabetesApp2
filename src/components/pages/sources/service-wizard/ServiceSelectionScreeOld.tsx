@@ -122,12 +122,16 @@ function mapStateToPropsScreen(appState: ReduxAppState, ownProps: Prop): Prop {
     }
 }
 
+const getTodayNew = () => {
+    return new Date();
+}
+
 function mapDispatchToPropsScreen(dispatch: Dispatch, ownProps: Prop): Prop {
     return {
         ...ownProps,
         selectService: (key: string) => {
             dispatch(setService(key))
-            dispatch(resetAction(DataServiceManager.instance.getServiceByKey(key).getToday()))
+            dispatch(resetAction(getTodayNew()))
         }
     }
 }
