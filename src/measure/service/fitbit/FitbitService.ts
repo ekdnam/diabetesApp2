@@ -40,8 +40,8 @@ export default class FitbitService extends DataService {
     this.thumbnail = core.thumbnailOverride || require('@assets/images/services/service_fitbit.jpg')
 
     this.dailyStepMeasure = new FitbitDailyStepMeasure(core);
-    this.dailyHeartRateMeasure = new FitbitDailyHeartRateMeasure(core);
-    this.weightLogMeasure = new FitbitWeightMeasure(core);
+    // this.dailyHeartRateMeasure = new FitbitDailyHeartRateMeasure(core);
+    // this.weightLogMeasure = new FitbitWeightMeasure(core);
     //this.sleepMeasure = new FitbitSleepMeasure(core);
   
     this.intradayStepMeasure = new FitbitIntraDayStepMeasure(core);
@@ -49,8 +49,8 @@ export default class FitbitService extends DataService {
 
     this.preloadableMeasures = [
       this.dailyStepMeasure,
-      this.dailyHeartRateMeasure,
-      this.weightLogMeasure,
+      // this.dailyHeartRateMeasure,
+      // this.weightLogMeasure,
       //this.sleepMeasure,
       this.intradayStepMeasure,
       this.intradayHeartRateMeasure
@@ -62,8 +62,8 @@ export default class FitbitService extends DataService {
   }
 
   readonly dailyStepMeasure: FitbitDailyStepMeasure;
-  readonly dailyHeartRateMeasure: FitbitDailyHeartRateMeasure;
-  readonly weightLogMeasure: FitbitWeightMeasure;
+  // readonly dailyHeartRateMeasure: FitbitDailyHeartRateMeasure;
+  // readonly weightLogMeasure: FitbitWeightMeasure;
   //readonly sleepMeasure: FitbitSleepMeasure;
 
   readonly intradayStepMeasure: FitbitIntraDayStepMeasure;
@@ -81,12 +81,12 @@ export default class FitbitService extends DataService {
       case DataSourceType.BloodGlucose:
           boxPlotInfo = await this.dailyStepMeasure.getBoxPlotInfoOfDataset()
           break;
-      case DataSourceType.HeartRate:
-        boxPlotInfo = await this.dailyHeartRateMeasure.getBoxPlotInfoOfDataset()
-        break;
-      case DataSourceType.Weight:
-        boxPlotInfo = await this.weightLogMeasure.getBoxPlotInfoOfDataset()
-        break;
+      // case DataSourceType.HeartRate:
+      //   boxPlotInfo = await this.dailyHeartRateMeasure.getBoxPlotInfoOfDataset()
+      //   break;
+      // case DataSourceType.Weight:
+      //   boxPlotInfo = await this.weightLogMeasure.getBoxPlotInfoOfDataset()
+      //   break;
       //case DataSourceType.HoursSlept:
         //boxPlotInfo = await this.sleepMeasure.getBoxPlotInfoOfDataset('length')
         //break;
@@ -173,13 +173,13 @@ export default class FitbitService extends DataService {
       case DataSourceType.BloodGlucose:
         console.log("In FitbitService.ts fetchDataImpl() function - DataSourceType.BloodGlucose case of the switch - calling dailyStepMeasure.fetchData");
         return await this.dailyStepMeasure.fetchData(start, end, includeStatistics, includeToday);
-      case DataSourceType.HeartRate:
-        return await this.dailyHeartRateMeasure.fetchData(start, end, includeStatistics, includeToday);
+      // case DataSourceType.HeartRate:
+      //   return await this.dailyHeartRateMeasure.fetchData(start, end, includeStatistics, includeToday);
       /*case DataSourceType.HoursSlept:
         case DataSourceType.SleepRange:
         return await this.sleepMeasure.fetchData(dataSource, start, end, includeStatistics, includeToday);*/
-      case DataSourceType.Weight:
-        return await this.weightLogMeasure.fetchData(start, end, includeStatistics, includeToday);
+      // case DataSourceType.Weight:
+      //   return await this.weightLogMeasure.fetchData(start, end, includeStatistics, includeToday);
     }
   }
 
@@ -221,24 +221,24 @@ export default class FitbitService extends DataService {
             end,
             cycle,
           );
-      case DataSourceType.HeartRate:
-        return await this.dailyHeartRateMeasure.fetchCyclicGroupedData(
-          start,
-          end,
-          cycle,
-        );
+      // case DataSourceType.HeartRate:
+      //   return await this.dailyHeartRateMeasure.fetchCyclicGroupedData(
+      //     start,
+      //     end,
+      //     cycle,
+      //   );
       /*case DataSourceType.HoursSlept:
         return await this.sleepMeasure.fetchHoursSleptCyclicGroupedData(
           start,
           end,
           cycle,
         );*/
-      case DataSourceType.Weight:
-        return await this.weightLogMeasure.fetchCyclicGroupedData(
-          start,
-          end,
-          cycle,
-        );
+      // case DataSourceType.Weight:
+      //   return await this.weightLogMeasure.fetchCyclicGroupedData(
+      //     start,
+      //     end,
+      //     cycle,
+      //   );
       /*case DataSourceType.SleepRange:
         return await this.sleepMeasure.fetchSleepRangeCyclicGroupedData(
           start,
@@ -256,10 +256,10 @@ export default class FitbitService extends DataService {
     switch (dataSource) {
       case DataSourceType.StepCount:
         return await this.dailyStepMeasure.fetchRangeGroupedData(start, end);
-      case DataSourceType.HeartRate:
-        return await this.dailyHeartRateMeasure.fetchRangeGroupedData(start, end);
-      case DataSourceType.Weight:
-        return await this.weightLogMeasure.fetchRangeGroupedData(start, end);
+      // case DataSourceType.HeartRate:
+      //   return await this.dailyHeartRateMeasure.fetchRangeGroupedData(start, end);
+      // case DataSourceType.Weight:
+      //   return await this.weightLogMeasure.fetchRangeGroupedData(start, end);
       /*case DataSourceType.HoursSlept:
         return await this.sleepMeasure.fetchHoursSleptAggregatedData(start, end);
       case DataSourceType.SleepRange:
@@ -272,10 +272,10 @@ export default class FitbitService extends DataService {
     switch (dataSource) {
       case DataSourceType.StepCount:
         return await this.dailyStepMeasure.fetchCycleRangeDimensionData(start, end, cycleDimension)
-      case DataSourceType.HeartRate:
-        return await this.dailyHeartRateMeasure.fetchCycleRangeDimensionData(start, end, cycleDimension)
-      case DataSourceType.Weight:
-        return await this.weightLogMeasure.fetchCycleRangeDimensionData(start, end, cycleDimension)
+      // case DataSourceType.HeartRate:
+      //   return await this.dailyHeartRateMeasure.fetchCycleRangeDimensionData(start, end, cycleDimension)
+      // case DataSourceType.Weight:
+      //   return await this.weightLogMeasure.fetchCycleRangeDimensionData(start, end, cycleDimension)
       /*case DataSourceType.HoursSlept:
         return await this.sleepMeasure.fetchHoursSleptRangeDimensionData(start, end, cycleDimension)
       case DataSourceType.SleepRange:
@@ -288,10 +288,10 @@ export default class FitbitService extends DataService {
     switch (dataSource) {
       case DataSourceType.StepCount:
         return await this.dailyStepMeasure.fetchCycleDailyDimensionData(start, end, cycleDimension)
-      case DataSourceType.HeartRate:
-        return await this.dailyHeartRateMeasure.fetchCycleDailyDimensionData(start, end, cycleDimension)
-      case DataSourceType.Weight:
-        return await this.weightLogMeasure.fetchCycleDailyDimensionData(start, end, cycleDimension)
+      // case DataSourceType.HeartRate:
+      //   return await this.dailyHeartRateMeasure.fetchCycleDailyDimensionData(start, end, cycleDimension)
+      // case DataSourceType.Weight:
+      //   return await this.weightLogMeasure.fetchCycleDailyDimensionData(start, end, cycleDimension)
       /*case DataSourceType.HoursSlept:
       case DataSourceType.SleepRange:
         return await this.sleepMeasure.fetchCycleDailyDimensionData(dataSource, start, end, cycleDimension)*/
