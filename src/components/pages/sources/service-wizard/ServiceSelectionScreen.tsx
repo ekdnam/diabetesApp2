@@ -25,8 +25,17 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {SettingsSteckParamList} from '@components/Routes';
 import {resetAction} from '@state/exploration/interaction/actions';
 import SQLite, { DatabaseParams } from 'react-native-sqlite-storage';
-import { format, toDate } from 'date-fns'
-
+import { format, toDate } from 'date-fns';
+import {DateBar, DateRangeBar} from '@components/exploration/DateRangeBar'
+import { ExplorationType, ParameterKey, ParameterType } from '@data-at-hand/core/exploration/ExplorationInfo';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { explorationInfoHelper } from '@core/exploration/ExplorationInfoHelper';
+import { InteractionType } from '@data-at-hand/core/exploration/actions';
+import { createSetRangeAction, setDataSourceAction, goBackAction, setDateAction, setIntraDayDataSourceAction, setCycleTypeAction, setCycleDimensionAction } from '@state/exploration/interaction/actions';
+import { makeNewSessionId, startSpeechSession, requestStopDictation } from '@state/speech/commands';
+import { SpeechContextHelper } from '@data-at-hand/core/speech/SpeechContext';
+import { createSetShowGlobalPopupAction } from '@state/speech/actions';
 interface Prop {
     navigation: StackNavigationProp<
         SettingsSteckParamList,
@@ -53,6 +62,76 @@ interface State {
 //   </TouchableOpacity>
 // );
 
+const HeaderRangeBar = React.memo((props: { parameterKey?: ParameterKey, showBorder?: boolean }) => {
+
+    const explorationInfo = useSelector((appState: ReduxAppState) => appState.explorationState.info)
+    const dispatch = useDispatch()
+    const [speechSessionId, setSpeechSessionId] = useState<string | null>(null)
+
+    const range = explorationInfoHelper.getParameterValue<[number, number]>(explorationInfo, ParameterType.Range, props.parameterKey)!
+
+    const onRangeChanged = useCallback((from, to, xType: InteractionType, xContext: string) => {
+        dispatch(createSetRangeAction(xType, xContext, [from, to], props.parameterKey))
+    }, [dispatch, props.parameterKey])
+
+    const onLongPressIn = useCallback((position) => {
+        const sessionId = makeNewSessionId()
+        setSpeechSessionId(sessionId)
+        dispatch(startSpeechSession(sessionId, SpeechContextHelper.makeTimeSpeechContext(position, props.parameterKey)))
+        dispatch(createSetShowGlobalPopupAction(true, sessionId))
+    }, [dispatch, setSpeechSessionId, props.parameterKey])
+
+    const onLongPressOut = useCallback(() => {
+        if (speechSessionId != null) {
+            console.log("request stop dictation")
+            dispatch(requestStopDictation(speechSessionId))
+            dispatch(createSetShowGlobalPopupAction(false, speechSessionId))
+        }
+        setSpeechSessionId(null)
+    }, [dispatch, speechSessionId, setSpeechSessionId])
+
+    return <DateRangeBar from={range && range[0]} to={range && range[1]}
+        onRangeChanged={onRangeChanged}
+        onLongPressIn={onLongPressIn}
+        onLongPressOut={onLongPressOut}
+        showBorder={props.showBorder} />
+})
+
+const HeaderDateBar = React.memo(() => {
+    const [speechSessionId, setSpeechSessionId] = useState<string | null>(null)
+    const explorationInfo = useSelector((appState: ReduxAppState) => appState.explorationState.info)
+    const dispatch = useDispatch()
+
+    const todayDate = new Date();
+
+    // const date = explorationInfoHelper.getParameterValue<number>(explorationInfo, ParameterType.Date)!
+    const date = parseInt(todayDate.toISOString().split('T')[0].replaceAll('-', ''));
+
+    const onDateChanged = useCallback((date: number, interactionType: InteractionType, interactionContext: string) => {
+        dispatch(setDateAction(interactionType, interactionContext, date))
+    }, [dispatch])
+
+    const onLongPressIn = useCallback(() => {
+        const newSessionId = makeNewSessionId()
+        dispatch(createSetShowGlobalPopupAction(true, newSessionId))
+        dispatch(startSpeechSession(newSessionId, SpeechContextHelper.makeTimeSpeechContext('date')))
+        setSpeechSessionId(newSessionId)
+    }, [dispatch, setSpeechSessionId])
+
+    const onLongPressOut = useCallback(() => {
+        if (speechSessionId != null) {
+            dispatch(createSetShowGlobalPopupAction(false, speechSessionId))
+            dispatch(requestStopDictation(speechSessionId))
+        }
+        setSpeechSessionId(null)
+    }, [speechSessionId, setSpeechSessionId, dispatch])
+
+    return <DateBar date={date}
+        onDateChanged={onDateChanged}
+        onLongPressIn={onLongPressIn}
+        onLongPressOut={onLongPressOut}
+    />
+})
 class ServiceSelectionScreen extends React.Component<Prop, State> {
     constructor(props: Prop) {
         super(props);
@@ -131,6 +210,7 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
                     }} style={styles.appButtonContainer}>
                     <Text style={styles.appButtonText}>Submit with Date</Text>
                 </TouchableOpacity>
+                <HeaderDateBar />
                 {/* <ScrollView style={{ flex: 1 }}>
                     {
                         this.state.services

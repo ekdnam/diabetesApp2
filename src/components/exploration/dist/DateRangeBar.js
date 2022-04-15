@@ -477,6 +477,8 @@ exports.DateBar = react_1["default"].memo(function (props) {
         setDate(newDate);
         (_a = bottomSheetRef.current) === null || _a === void 0 ? void 0 : _a.close();
         props.onDateChanged && props.onDateChanged(newDate, actions_1.InteractionType.TouchOnly, 'picker');
+        console.log("DATE****: ", newDate);
+        react_native_1.Alert.alert(newDate.toString());
     }, [setDate, bottomSheetRef, props.onDateChanged]);
     return react_1["default"].createElement(react_native_gesture_handler_1.FlingGestureHandler, { direction: react_native_gesture_handler_1.Directions.LEFT, onHandlerStateChange: swipeLeft },
         react_1["default"].createElement(react_native_gesture_handler_1.FlingGestureHandler, { direction: react_native_gesture_handler_1.Directions.RIGHT, onHandlerStateChange: swipeRight },

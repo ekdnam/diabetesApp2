@@ -72,12 +72,70 @@ var actions_1 = require("@state/settings/actions");
 var InitialLoadingIndicator_1 = require("@components/pages/exploration/parts/main/InitialLoadingIndicator");
 var actions_2 = require("@state/exploration/interaction/actions");
 var react_native_sqlite_storage_1 = require("react-native-sqlite-storage");
+var DateRangeBar_1 = require("@components/exploration/DateRangeBar");
+var ExplorationInfo_1 = require("@data-at-hand/core/exploration/ExplorationInfo");
+var react_redux_2 = require("react-redux");
+var react_2 = require("react");
+var ExplorationInfoHelper_1 = require("@core/exploration/ExplorationInfoHelper");
+var actions_3 = require("@state/exploration/interaction/actions");
+var commands_1 = require("@state/speech/commands");
+var SpeechContext_1 = require("@data-at-hand/core/speech/SpeechContext");
+var actions_4 = require("@state/speech/actions");
 // TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 // const AppButton = ({ onPress: any, title: any }) => (
 //   <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
 //     <Text style={styles.appButtonText}>{title}</Text>
 //   </TouchableOpacity>
 // );
+var HeaderRangeBar = react_1["default"].memo(function (props) {
+    var explorationInfo = react_redux_2.useSelector(function (appState) { return appState.explorationState.info; });
+    var dispatch = react_redux_2.useDispatch();
+    var _a = react_2.useState(null), speechSessionId = _a[0], setSpeechSessionId = _a[1];
+    var range = ExplorationInfoHelper_1.explorationInfoHelper.getParameterValue(explorationInfo, ExplorationInfo_1.ParameterType.Range, props.parameterKey);
+    var onRangeChanged = react_2.useCallback(function (from, to, xType, xContext) {
+        dispatch(actions_3.createSetRangeAction(xType, xContext, [from, to], props.parameterKey));
+    }, [dispatch, props.parameterKey]);
+    var onLongPressIn = react_2.useCallback(function (position) {
+        var sessionId = commands_1.makeNewSessionId();
+        setSpeechSessionId(sessionId);
+        dispatch(commands_1.startSpeechSession(sessionId, SpeechContext_1.SpeechContextHelper.makeTimeSpeechContext(position, props.parameterKey)));
+        dispatch(actions_4.createSetShowGlobalPopupAction(true, sessionId));
+    }, [dispatch, setSpeechSessionId, props.parameterKey]);
+    var onLongPressOut = react_2.useCallback(function () {
+        if (speechSessionId != null) {
+            console.log("request stop dictation");
+            dispatch(commands_1.requestStopDictation(speechSessionId));
+            dispatch(actions_4.createSetShowGlobalPopupAction(false, speechSessionId));
+        }
+        setSpeechSessionId(null);
+    }, [dispatch, speechSessionId, setSpeechSessionId]);
+    return react_1["default"].createElement(DateRangeBar_1.DateRangeBar, { from: range && range[0], to: range && range[1], onRangeChanged: onRangeChanged, onLongPressIn: onLongPressIn, onLongPressOut: onLongPressOut, showBorder: props.showBorder });
+});
+var HeaderDateBar = react_1["default"].memo(function () {
+    var _a = react_2.useState(null), speechSessionId = _a[0], setSpeechSessionId = _a[1];
+    var explorationInfo = react_redux_2.useSelector(function (appState) { return appState.explorationState.info; });
+    var dispatch = react_redux_2.useDispatch();
+    var todayDate = new Date();
+    // const date = explorationInfoHelper.getParameterValue<number>(explorationInfo, ParameterType.Date)!
+    var date = parseInt(todayDate.toISOString().split('T')[0].replaceAll('-', ''));
+    var onDateChanged = react_2.useCallback(function (date, interactionType, interactionContext) {
+        dispatch(actions_3.setDateAction(interactionType, interactionContext, date));
+    }, [dispatch]);
+    var onLongPressIn = react_2.useCallback(function () {
+        var newSessionId = commands_1.makeNewSessionId();
+        dispatch(actions_4.createSetShowGlobalPopupAction(true, newSessionId));
+        dispatch(commands_1.startSpeechSession(newSessionId, SpeechContext_1.SpeechContextHelper.makeTimeSpeechContext('date')));
+        setSpeechSessionId(newSessionId);
+    }, [dispatch, setSpeechSessionId]);
+    var onLongPressOut = react_2.useCallback(function () {
+        if (speechSessionId != null) {
+            dispatch(actions_4.createSetShowGlobalPopupAction(false, speechSessionId));
+            dispatch(commands_1.requestStopDictation(speechSessionId));
+        }
+        setSpeechSessionId(null);
+    }, [speechSessionId, setSpeechSessionId, dispatch]);
+    return react_1["default"].createElement(DateRangeBar_1.DateBar, { date: date, onDateChanged: onDateChanged, onLongPressIn: onLongPressIn, onLongPressOut: onLongPressOut });
+});
 var ServiceSelectionScreen = /** @class */ (function (_super) {
     __extends(ServiceSelectionScreen, _super);
     function ServiceSelectionScreen(props) {
@@ -149,6 +207,7 @@ var ServiceSelectionScreen = /** @class */ (function (_super) {
                     insertRecordToDBWithDate(_this.state.text, _this.state.userDate);
                 }, style: styles.appButtonContainer },
                 react_1["default"].createElement(react_native_1.Text, { style: styles.appButtonText }, "Submit with Date")),
+            react_1["default"].createElement(HeaderDateBar, null),
             this.state.isLoading === true ? (react_1["default"].createElement(InitialLoadingIndicator_1.InitialLoadingIndicator, { loadingMessage: this.state.loadingMessage })) : null));
     };
     return ServiceSelectionScreen;

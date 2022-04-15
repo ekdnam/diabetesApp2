@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect, useImperativeHandle } from "react";
-import { View, StyleSheet, Text, ViewStyle, TextStyle, Animated } from "react-native";
+import { View, StyleSheet, Text, ViewStyle, TextStyle, Animated, Alert } from "react-native";
 import Colors from "@style/Colors";
 import { SpeechAffordanceIndicator } from "./SpeechAffordanceIndicator";
 import { Sizes, sizeByScreen } from "@style/Sizes";
@@ -632,6 +632,8 @@ export const DateBar = React.memo((props: {
         setDate(newDate)
         bottomSheetRef.current?.close()
         props.onDateChanged && props.onDateChanged(newDate, InteractionType.TouchOnly, 'picker')
+        console.log("DATE****: ", newDate);
+        Alert.alert(newDate.toString());
     }, [setDate, bottomSheetRef, props.onDateChanged])
 
     return <FlingGestureHandler
