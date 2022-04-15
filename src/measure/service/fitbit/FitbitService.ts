@@ -45,7 +45,7 @@ export default class FitbitService extends DataService {
     //this.sleepMeasure = new FitbitSleepMeasure(core);
   
     this.intradayStepMeasure = new FitbitIntraDayStepMeasure(core);
-    this.intradayHeartRateMeasure = new FitbitIntraDayHeartRateMeasure(core);
+    // this.intradayHeartRateMeasure = new FitbitIntraDayHeartRateMeasure(core);
 
     this.preloadableMeasures = [
       this.dailyStepMeasure,
@@ -53,7 +53,7 @@ export default class FitbitService extends DataService {
       // this.weightLogMeasure,
       //this.sleepMeasure,
       this.intradayStepMeasure,
-      this.intradayHeartRateMeasure
+      // this.intradayHeartRateMeasure
     ];
   }
 
@@ -67,7 +67,7 @@ export default class FitbitService extends DataService {
   //readonly sleepMeasure: FitbitSleepMeasure;
 
   readonly intradayStepMeasure: FitbitIntraDayStepMeasure;
-  readonly intradayHeartRateMeasure: FitbitIntraDayHeartRateMeasure;
+  // readonly intradayHeartRateMeasure: FitbitIntraDayHeartRateMeasure;
 
   private readonly preloadableMeasures: Array<FitbitServiceMeasureBase>
 
@@ -193,8 +193,8 @@ export default class FitbitService extends DataService {
         case IntraDayDataSourceType.StepCount:
           console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV In FitbitService.ts fetchIntraDayData() function - in switch - in case of IntraDayDataSourceType.StepCount - calling this.intradayStepMeasure.fetchData(date)");
           return await this.intradayStepMeasure.fetchData(date);
-        case IntraDayDataSourceType.HeartRate:
-          return await this.intradayHeartRateMeasure.fetchData(date);
+        // case IntraDayDataSourceType.HeartRate:
+        //   return await this.intradayHeartRateMeasure.fetchData(date);
         /*case IntraDayDataSourceType.Sleep:
           return await this.sleepMeasure.fetchIntraDayData(date);*/
       }

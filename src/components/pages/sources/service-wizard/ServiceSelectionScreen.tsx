@@ -82,17 +82,22 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
                     flexDirection: 'column',
                     alignItems: 'stretch',
                 }}>
-                <Text>Insert BG level</Text>
                 <TextInput
                     style = {{
-                        borderStartWidth : 2,
-                        borderEndWidth : 3,
-                        borderTopWidth : 1,
-                        borderLeftWidth : 2,
-                        borderRightWidth: 3,
-                        borderBottomWidth : 4,
+                        // borderStartWidth : 2,
+                        // borderEndWidth : 3,
+                        // borderTopWidth : 1,
+                        // borderLeftWidth : 2,
+                        // borderRightWidth: 3,
+                        // borderBottomWidth : 4,
+                        // borderWidth : 1,
+                        // borderColor : 'grey'
                         borderWidth : 1,
-                        borderColor : 'grey'
+                        margin: 12,
+                        height: 50,
+                        padding: 10,
+                        borderColor : '#183059',
+                        borderRadius:8
                         }}
                     placeholder="Enter BG level here"
                     onChangeText={(text) => this.setState({text})}
@@ -103,21 +108,31 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
                         var x = "Your BG level is " + this.state.text;
                         Alert.alert(x);
                         insertRecordToDB(this.state.text);
-                    }} style={styles.appButtonContainer}>
+                    }} style={{
+                        margin:12,
+                        backgroundColor:'#276fbf',
+                        padding:12,
+                        borderRadius:10
+                
+                    }}>
                     <Text style={styles.appButtonText}>Submit</Text>
                 </TouchableOpacity>
                 <TextInput
                     style = {{
-                        borderStartWidth : 2,
-                        borderEndWidth : 3,
-                        borderTopWidth : 1,
-                        borderLeftWidth : 2,
-                        borderRightWidth: 3,
-                        borderBottomWidth : 4,
+                        // borderStartWidth : 0,
+                        // borderEndWidth : 0,
+                        // borderTopWidth : 0,
+                        // borderLeftWidth : 1,
+                        // borderRightWidth: 3,
+                        // borderBottomWidth : 4,
                         borderWidth : 1,
-                        borderColor : 'grey'
+                        margin: 12,
+                        height: 50,
+                        padding: 10,
+                        borderColor : '#183059',
+                        borderRadius:8
                         }}
-                    placeholder="Date"
+                    placeholder="Enter date here (YYYY-MM-DD)"
                     onChangeText={(userDate) => this.setState({userDate})}
                     value={this.state.userDate}
                 />
@@ -128,7 +143,15 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
                         Alert.alert(x);
                         Alert.alert(y);
                         insertRecordToDBWithDate(this.state.text, this.state.userDate);
-                    }} style={styles.appButtonContainer}>
+                    }} style={
+                        {
+                            margin:12,
+                            backgroundColor:'#276fbf',
+                            padding:12,
+                            borderRadius:10
+                    
+                        }
+                    }>
                     <Text style={styles.appButtonText}>Submit with Date</Text>
                 </TouchableOpacity>
                 {/* <ScrollView style={{ flex: 1 }}>
