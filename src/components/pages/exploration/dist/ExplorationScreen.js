@@ -389,25 +389,21 @@ var ExplorationScreen = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.setPrepareStatus(PrepareStatus.ACQUIRING_PERMISSION);
+                        this.setPrepareStatus(PrepareStatus.PREPARED);
                         return [4 /*yield*/, this.checkPermission()];
                     case 1:
                         permissionResult = _a.sent();
-                        if (!(permissionResult === 'granted')) return [3 /*break*/, 3];
-                        console.log("All permissions are granted. Proceed to activation..");
-                        return [4 /*yield*/, this.performServiceActivationPhase()];
-                    case 2:
-                        _a.sent();
-                        return [3 /*break*/, 4];
-                    case 3:
-                        if (permissionResult === 'forwarded') {
+                        if (permissionResult === 'granted') {
+                            console.log("All permissions are granted. Proceed to activation..");
+                            // await this.performServiceActivationPhase()
+                        }
+                        else if (permissionResult === 'forwarded') {
                             console.log("I will wait the user to return from the permission settings.");
                         }
                         else {
                             this.setPrepareStatus(PrepareStatus.FAILED);
                         }
-                        _a.label = 4;
-                    case 4: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });

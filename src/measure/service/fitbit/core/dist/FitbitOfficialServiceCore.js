@@ -43,7 +43,6 @@ var DataService_1 = require("../../DataService");
 var time_1 = require("@data-at-hand/core/utils/time");
 var database_1 = require("../sqlite/database");
 var date_fns_1 = require("date-fns");
-var errors_1 = require("@utils/errors");
 var ErrorReportingService_1 = require("@core/logging/ErrorReportingService");
 var react_native_path_1 = require("react-native-path");
 var STORAGE_KEY_AUTH_STATE = DataService_1.DataService.STORAGE_PREFIX + 'fitbit:state';
@@ -315,71 +314,10 @@ var FitbitOfficialServiceCore = /** @class */ (function () {
     };
     FitbitOfficialServiceCore.prototype.fetchFitbitQuery = function (url) {
         return __awaiter(this, void 0, Promise, function () {
-            var state, accessToken;
-            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        console.log('fetch query for ', url);
-                        return [4 /*yield*/, this.localAsyncStorage.getObject(STORAGE_KEY_AUTH_STATE)];
-                    case 1:
-                        state = _a.sent();
-                        if (!(state == null || state.accessToken == null)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.authenticate()];
-                    case 2:
-                        accessToken = _a.sent();
-                        return [3 /*break*/, 4];
-                    case 3:
-                        accessToken = state.accessToken;
-                        _a.label = 4;
-                    case 4: return [2 /*return*/, fetch(url, {
-                            method: 'GET',
-                            headers: {
-                                'Accept-Language': null,
-                                Authorization: 'Bearer ' + accessToken,
-                                'Content-Type': 'application/json'
-                            }
-                        }).then(function (result) { return __awaiter(_this, void 0, void 0, function () {
-                            var quota, remainedCalls, secondsLeftToNextReset, json;
-                            var _this = this;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        quota = result.headers.get('Fitbit-Rate-Limit-Limit');
-                                        remainedCalls = Number.parseInt(result.headers.get('Fitbit-Rate-Limit-Remaining'));
-                                        secondsLeftToNextReset = Number.parseInt(result.headers.get('Fitbit-Rate-Limit-Reset'));
-                                        return [4 /*yield*/, this.localAsyncStorage.set(STORAGE_KEY_LEFT_QUOTA, remainedCalls)];
-                                    case 1:
-                                        _a.sent();
-                                        return [4 /*yield*/, this.localAsyncStorage.set(STORAGE_KEY_QUOTA_RESET_AT, secondsLeftToNextReset * 1000 + Date.now())];
-                                    case 2:
-                                        _a.sent();
-                                        if (!(result.ok === false)) return [3 /*break*/, 4];
-                                        return [4 /*yield*/, result.json()];
-                                    case 3:
-                                        json = _a.sent();
-                                        switch (result.status) {
-                                            case 401:
-                                                if (json.errors[0].errorType === 'expired_token') {
-                                                    console.log('Fitbit token is expired. refresh token and try once again.');
-                                                    return [2 /*return*/, this.authenticate().then(function () { return _this.fetchFitbitQuery(url); })];
-                                                }
-                                                else
-                                                    throw new errors_1.SystemError(DataService_1.ServiceApiErrorType.CredentialError, "Access token invalid.");
-                                            case 429:
-                                                throw new errors_1.SystemError(DataService_1.ServiceApiErrorType.QuotaLimitReached, "Quota limit reached.");
-                                            default:
-                                                throw { error: result.status, message: result.statusText };
-                                        }
-                                        return [3 /*break*/, 5];
-                                    case 4:
-                                        console.log('Fitbit API call succeeded. Remaining quota:', remainedCalls + '/' + quota, 'next reset:', secondsLeftToNextReset + ' secs.');
-                                        return [2 /*return*/, result.json()];
-                                    case 5: return [2 /*return*/];
-                                }
-                            });
-                        }); })];
-                }
+                console.log("@@@ COMMENTED CODE FOR FETCHFITBITQUERY @@@");
+                console.log('fetch query for ', url);
+                return [2 /*return*/];
             });
         });
     };

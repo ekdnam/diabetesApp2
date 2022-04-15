@@ -288,12 +288,12 @@ class ExplorationScreen extends React.PureComponent<ExplorationProps, State> {
     }
 
     private async prepare() {
-        this.setPrepareStatus(PrepareStatus.ACQUIRING_PERMISSION)
+        this.setPrepareStatus(PrepareStatus.PREPARED)
         // const permissionResult = await this.checkPermission()
         const permissionResult = await this.checkPermission()
         if (permissionResult === 'granted') {
             console.log("All permissions are granted. Proceed to activation..")
-            await this.performServiceActivationPhase()
+            // await this.performServiceActivationPhase()
         } else if (permissionResult === 'forwarded') {
             console.log("I will wait the user to return from the permission settings.")
         } else {

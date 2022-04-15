@@ -589,7 +589,7 @@ async performDatabaseOperation(startDate: number, endDate: number) : any {
       ]
     } as StepCountRangedData
 
-    console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII",base);
+    // console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII",base);
     return base
   }
 }

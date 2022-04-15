@@ -223,56 +223,57 @@ export default class FitbitOfficialServiceCore implements FitbitServiceCore {
     }
 
     async fetchFitbitQuery(url: string): Promise<any> {
+        console.log("@@@ COMMENTED CODE FOR FETCHFITBITQUERY @@@");
         console.log('fetch query for ', url);
-        const state = await this.localAsyncStorage.getObject(STORAGE_KEY_AUTH_STATE);
-        var accessToken;
-        if (state == null || state.accessToken == null) {
-            accessToken = await this.authenticate();
-        } else accessToken = state.accessToken;
+        // const state = await this.localAsyncStorage.getObject(STORAGE_KEY_AUTH_STATE);
+        // var accessToken;
+        // if (state == null || state.accessToken == null) {
+        //     accessToken = await this.authenticate();
+        // } else accessToken = state.accessToken;
 
-        return fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept-Language': null, // METRIC
-                Authorization: 'Bearer ' + accessToken,
-                'Content-Type': 'application/json',
-            },
-        }).then(async result => {
-            const quota = result.headers.get('Fitbit-Rate-Limit-Limit');
-            const remainedCalls = Number.parseInt(result.headers.get('Fitbit-Rate-Limit-Remaining'));
-            const secondsLeftToNextReset = Number.parseInt(result.headers.get(
-                'Fitbit-Rate-Limit-Reset',
-            ));
+        // return fetch(url, {
+        //     method: 'GET',
+        //     headers: {
+        //         'Accept-Language': null, // METRIC
+        //         Authorization: 'Bearer ' + accessToken,
+        //         'Content-Type': 'application/json',
+        //     },
+        // }).then(async result => {
+        //     const quota = result.headers.get('Fitbit-Rate-Limit-Limit');
+        //     const remainedCalls = Number.parseInt(result.headers.get('Fitbit-Rate-Limit-Remaining'));
+        //     const secondsLeftToNextReset = Number.parseInt(result.headers.get(
+        //         'Fitbit-Rate-Limit-Reset',
+        //     ));
 
-            await this.localAsyncStorage.set(STORAGE_KEY_LEFT_QUOTA, remainedCalls)
-            await this.localAsyncStorage.set(STORAGE_KEY_QUOTA_RESET_AT, secondsLeftToNextReset * 1000 + Date.now())
+        //     await this.localAsyncStorage.set(STORAGE_KEY_LEFT_QUOTA, remainedCalls)
+        //     await this.localAsyncStorage.set(STORAGE_KEY_QUOTA_RESET_AT, secondsLeftToNextReset * 1000 + Date.now())
 
-            if (result.ok === false) {
-                const json = await result.json();
-                switch (result.status) {
-                    case 401:
-                        if (json.errors[0].errorType === 'expired_token') {
-                            console.log(
-                                'Fitbit token is expired. refresh token and try once again.',
-                            );
-                            return this.authenticate().then(() => this.fetchFitbitQuery(url));
-                        } else throw new SystemError(ServiceApiErrorType.CredentialError, "Access token invalid.");
+        //     if (result.ok === false) {
+        //         const json = await result.json();
+        //         switch (result.status) {
+        //             case 401:
+        //                 if (json.errors[0].errorType === 'expired_token') {
+        //                     console.log(
+        //                         'Fitbit token is expired. refresh token and try once again.',
+        //                     );
+        //                     return this.authenticate().then(() => this.fetchFitbitQuery(url));
+        //                 } else throw new SystemError(ServiceApiErrorType.CredentialError, "Access token invalid.");
 
-                    case 429:
-                        throw new SystemError(ServiceApiErrorType.QuotaLimitReached, "Quota limit reached.")
-                    default:
-                        throw { error: result.status, message: result.statusText};
-                }
-            } else {
-                console.log(
-                    'Fitbit API call succeeded. Remaining quota:',
-                    remainedCalls + '/' + quota,
-                    'next reset:',
-                    secondsLeftToNextReset + ' secs.',
-                );
-                return result.json();
-            }
-        });
+        //             case 429:
+        //                 throw new SystemError(ServiceApiErrorType.QuotaLimitReached, "Quota limit reached.")
+        //             default:
+        //                 throw { error: result.status, message: result.statusText};
+        //         }
+        //     } else {
+        //         console.log(
+        //             'Fitbit API call succeeded. Remaining quota:',
+        //             remainedCalls + '/' + quota,
+        //             'next reset:',
+        //             secondsLeftToNextReset + ' secs.',
+        //         );
+        //         return result.json();
+        //     }
+        // });
     }
 
     private async fetchDataFromPrefetchBackend(dataSourceTableType: string, start: number, end: number): Promise<{ queryEndDate: number, queriedAt: number, result: Array<any> } | null> {

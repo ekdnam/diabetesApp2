@@ -28,11 +28,11 @@ class ExplorationDataResolver {
     prevServiceKey?: string,
     prevData?: any,
   ): Promise<any> {
-    console.log("In ExplorationDataResolver.ts in loadData() explorationInfo = ", explorationInfo);
-    console.log("In ExplorationDataResolver.ts in loadData() selectedServiceKey = ", selectedServiceKey);
-    console.log("In ExplorationDataResolver.ts in loadData() prevInfo = ", prevInfo);
-    console.log("In ExplorationDataResolver.ts in loadData() prevServiceKey = ", prevServiceKey);
-    console.log("In ExplorationDataResolver.ts in loadData() prevData = ", prevData);
+    // console.log("In ExplorationDataResolver.ts in loadData() explorationInfo = ", explorationInfo);
+    // console.log("In ExplorationDataResolver.ts in loadData() selectedServiceKey = ", selectedServiceKey);
+    // console.log("In ExplorationDataResolver.ts in loadData() prevInfo = ", prevInfo);
+    // console.log("In ExplorationDataResolver.ts in loadData() prevServiceKey = ", prevServiceKey);
+    // console.log("In ExplorationDataResolver.ts in loadData() prevData = ", prevData);
 
     const usePrevData = selectedServiceKey === prevServiceKey
     switch (explorationInfo.type) {
@@ -256,12 +256,12 @@ class ExplorationDataResolver {
     }
 
     console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling service.fetchData() function");
-    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling source = ", source);
-    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[0] = ", range[0]);
-    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[1] = ", range[1]);
+    // console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling source = ", source);
+    // console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[0] = ", range[0]);
+    // console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[1] = ", range[1]);
 
     const data = await service.fetchData(source, range[0], range[1])
-    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() data from service.fetchData() function = ", data);
+    // console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() data from service.fetchData() function = ", data);
 
     console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling service.getPreferredValueRange(source) function");
     data.preferredValueRange = await service.getPreferredValueRange(source)
