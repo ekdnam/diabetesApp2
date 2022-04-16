@@ -98,41 +98,42 @@ const HeaderRangeBar = React.memo((props: { parameterKey?: ParameterKey, showBor
         showBorder={props.showBorder} />
 })
 
-const HeaderDateBar = React.memo(() => {
-    const [speechSessionId, setSpeechSessionId] = useState<string | null>(null)
-    const explorationInfo = useSelector((appState: ReduxAppState) => appState.explorationState.info)
-    const dispatch = useDispatch()
+// const HeaderDateBar = React.memo(() => {
+//     const [speechSessionId, setSpeechSessionId] = useState<string | null>(null)
+//     const explorationInfo = useSelector((appState: ReduxAppState) => appState.explorationState.info)
+//     const dispatch = useDispatch()
 
-    const todayDate = new Date();
+//     const todayDate = new Date();
 
-    // const date = explorationInfoHelper.getParameterValue<number>(explorationInfo, ParameterType.Date)!
-    const date = parseInt(todayDate.toISOString().split('T')[0].replaceAll('-', ''));
+//     // const date = explorationInfoHelper.getParameterValue<number>(explorationInfo, ParameterType.Date)!
+//     const date = parseInt(todayDate.toISOString().split('T')[0].replaceAll('-', ''));
 
-    const onDateChanged = useCallback((date: number, interactionType: InteractionType, interactionContext: string) => {
-        dispatch(setDateAction(interactionType, interactionContext, date))
-    }, [dispatch])
+//     const onDateChanged = useCallback((date: number, interactionType: InteractionType, interactionContext: string) => {
+//         dispatch(setDateAction(interactionType, interactionContext, date))
+//         console.log('TODAY DATE:::', date);
+//     }, [dispatch])
 
-    const onLongPressIn = useCallback(() => {
-        const newSessionId = makeNewSessionId()
-        dispatch(createSetShowGlobalPopupAction(true, newSessionId))
-        dispatch(startSpeechSession(newSessionId, SpeechContextHelper.makeTimeSpeechContext('date')))
-        setSpeechSessionId(newSessionId)
-    }, [dispatch, setSpeechSessionId])
+//     const onLongPressIn = useCallback(() => {
+//         const newSessionId = makeNewSessionId()
+//         dispatch(createSetShowGlobalPopupAction(true, newSessionId))
+//         dispatch(startSpeechSession(newSessionId, SpeechContextHelper.makeTimeSpeechContext('date')))
+//         setSpeechSessionId(newSessionId)
+//     }, [dispatch, setSpeechSessionId])
 
-    const onLongPressOut = useCallback(() => {
-        if (speechSessionId != null) {
-            dispatch(createSetShowGlobalPopupAction(false, speechSessionId))
-            dispatch(requestStopDictation(speechSessionId))
-        }
-        setSpeechSessionId(null)
-    }, [speechSessionId, setSpeechSessionId, dispatch])
+//     const onLongPressOut = useCallback(() => {
+//         if (speechSessionId != null) {
+//             dispatch(createSetShowGlobalPopupAction(false, speechSessionId))
+//             dispatch(requestStopDictation(speechSessionId))
+//         }
+//         setSpeechSessionId(null)
+//     }, [speechSessionId, setSpeechSessionId, dispatch])
 
-    return <DateBar date={date}
-        onDateChanged={onDateChanged}
-        onLongPressIn={onLongPressIn}
-        onLongPressOut={onLongPressOut}
-    />
-})
+//     return <DateBar date={date}
+//         onDateChanged={onDateChanged}
+//         onLongPressIn={onLongPressIn}
+//         onLongPressOut={onLongPressOut}
+//     />
+// })
 
 class ServiceSelectionScreen extends React.Component<Prop, State> {
     constructor(props: Prop) {
@@ -146,6 +147,48 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
             userDate: ''
         };
     }
+
+     HeaderDateBar = React.memo(() => {
+        const [speechSessionId, setSpeechSessionId] = useState<string | null>(null)
+        const explorationInfo = useSelector((appState: ReduxAppState) => appState.explorationState.info)
+        const dispatch = useDispatch()
+    
+        const todayDate = new Date();
+    
+        // const date = explorationInfoHelper.getParameterValue<number>(explorationInfo, ParameterType.Date)!
+        const date = parseInt(todayDate.toISOString().split('T')[0].replaceAll('-', ''));
+    
+        const onDateChanged = useCallback((date: number, interactionType: InteractionType, interactionContext: string) => {
+            dispatch(setDateAction(interactionType, interactionContext, date))
+            console.log('TODAY DATE:::', date);
+            var numberAsString = date.toString();
+            console.log(numberAsString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));   
+            numberAsString =  numberAsString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+            console.log(numberAsString);
+            this.setState({userDate: numberAsString});
+        }, [dispatch])
+    
+        const onLongPressIn = useCallback(() => {
+            const newSessionId = makeNewSessionId()
+            dispatch(createSetShowGlobalPopupAction(true, newSessionId))
+            dispatch(startSpeechSession(newSessionId, SpeechContextHelper.makeTimeSpeechContext('date')))
+            setSpeechSessionId(newSessionId)
+        }, [dispatch, setSpeechSessionId])
+    
+        const onLongPressOut = useCallback(() => {
+            if (speechSessionId != null) {
+                dispatch(createSetShowGlobalPopupAction(false, speechSessionId))
+                dispatch(requestStopDictation(speechSessionId))
+            }
+            setSpeechSessionId(null)
+        }, [speechSessionId, setSpeechSessionId, dispatch])
+    
+        return <DateBar date={date}
+            onDateChanged={onDateChanged}
+            onLongPressIn={onLongPressIn}
+            onLongPressOut={onLongPressOut}
+        />
+    })
 
     async componentDidMount() {
         const supportedServices = await DataServiceManager.instance.getServicesSupportedInThisSystem();
@@ -227,7 +270,7 @@ class ServiceSelectionScreen extends React.Component<Prop, State> {
                     }>
                     <Text style={styles.appButtonText}>Submit with Date</Text>
                 </TouchableOpacity>
-                <HeaderDateBar />
+                <this.HeaderDateBar />
                 {/* <ScrollView style={{ flex: 1 }}>
                     {
                         this.state.services
