@@ -261,13 +261,13 @@ class OverviewMainPanel extends React.PureComponent<Props, State> {
 function mapStateToProps(state: ReduxAppState, ownProps: Props): Props {
     console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function");
     const selectedService = DataServiceManager.instance.getServiceByKey(state.settingsState.serviceKey)
-    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state = ", state);
-    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - ownProps = ", ownProps);
-    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - selectedService = ", selectedService);
-    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationDataState.isBusy = ", state.explorationDataState.isBusy);
-    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationDataState.data = ", state.explorationDataState.data);
-    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationState.uiStatus.overviewScrollY = ", state.explorationState.uiStatus.overviewScrollY);
-    console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationState.info.dataDrivenQuery = ", state.explorationState.info.dataDrivenQuery);
+    // console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state = ", state);
+    // console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - ownProps = ", ownProps);
+    // console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - selectedService = ", selectedService);
+    // console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationDataState.isBusy = ", state.explorationDataState.isBusy);
+    // console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationDataState.data = ", state.explorationDataState.data);
+    // console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationState.uiStatus.overviewScrollY = ", state.explorationState.uiStatus.overviewScrollY);
+    // console.log("$$$ In OverviewMainPanel.tsx - mapStateToProps() function - state.explorationState.info.dataDrivenQuery = ", state.explorationState.info.dataDrivenQuery);
     return {
         ...ownProps,
         isLoading: state.explorationDataState.isBusy,
