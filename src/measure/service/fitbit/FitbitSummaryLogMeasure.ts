@@ -52,6 +52,7 @@ export abstract class FitbitSummaryLogMeasure<
 
        let statistics
 
+
        console.log("@#@#@# In FitbitSummaryLogMeasure.ts - fetchPreliminaryBloodGlucoseData() - includeStatistics =  ", includeStatistics);
 
        if (includeStatistics === true) {
@@ -62,11 +63,13 @@ export abstract class FitbitSummaryLogMeasure<
            {type: SQLiteHelper.AggregationType.SUM, aggregatedColumnName: 'value', as: 'sum'},
          ], condition, params)
        }
+
        else {
         console.log("@$@$@$ In FitbitSummaryLogMeasure.ts - fetchPreliminaryBloodGlucoseData() - includeStatistics = false, so reached in else part ", );
        }
 
        console.log("@#@#@# In FitbitSummaryLogMeasure.ts - fetchPreliminaryBloodGlucoseData() - statistics =  ", statistics);
+
 
        return Promise.resolve({
          list,

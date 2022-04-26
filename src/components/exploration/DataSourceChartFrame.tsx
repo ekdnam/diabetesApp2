@@ -147,8 +147,9 @@ function formatTodayValue(dataSource: DataSourceType, todayData: number | [numbe
                     text: commaNumber(todayData as number),
                     type: 'value',
                 },
-                { text: ' steps', type: 'unit' },
+                { text: ' mg/dL', type: 'unit' },
             ] : null
+
 
             break;
         case DataSourceType.BloodGlucose:
@@ -187,9 +188,7 @@ function formatStatistics(sourceType: DataSourceType, statisticsType: Statistics
                 case "total": return commaNumber(value)
             break;
 
-//                 case "avg": return avg_value;
-//                 case "range": return range_start + " - " + range_end
-//                 case "total": return sum
+
 
             }
         case DataSourceType.BloodGlucose:
@@ -201,66 +200,6 @@ function formatStatistics(sourceType: DataSourceType, statisticsType: Statistics
             }
        }
 }
-/*
-function open(): Promise<SQLite.SQLiteDatabase> {
-
-    //console.log("try open the database:", );
-
-    _dbInitPromise = SQLite.openDatabase({ name: 'BloodGlucoseDatabaseTmp.db' })
-      .then(db => {
-        //console.log("db opened.")
-        return db
-          .transaction(tx => {
-          //console.log("-------------------------------------- Opening Database ");
-
-
-          //tx.executeSql('DROP TABLE IF EXISTS blood_glucose_level', []);
-
-          tx.executeSql(
-                        'CREATE TABLE IF NOT EXISTS blood_glucose_level(day_of_week INTEGER, month INTEGER, numberedDate DATE, value INTEGER, year INTEGER)',
-                        []
-                      );
-          }).then(tx => db)
-      })
-    return _dbInitPromise
-  }*/
-/*
-async function performDatabaseOperation() : any {
-
-//     console.log("-------------------------------------- Inserting into table ");
-
-      /*await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
-                                                              [1, 1, 20220126, 20000, 2022]);
-
-       await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
-                                                                    [ 2, 1, 20220127, 30058, 2022]);
-
-       await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
-                                                                    [ 3, 1, 20220128, 40000, 2022]);
-
-       await (await open()).executeSql('INSERT INTO blood_glucose_level (day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
-                                                                    [ 4, 1, 20220129, 50000, 2022]);
-       await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
-                                                                    [5, 1, 20220130, 2000, 2022]);
-
-       await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
-                                                                    [ 6, 1, 20220131, 5000, 2022]);
-*/
-
-
-
-      //console.log("-------------------------------------- Fetching data from table ");
-
-      //const [result] = await (await open()).executeSql('select day_of_week as dayOfWeek, month, numberedDate, value, year from blood_glucose_level',
-                                                                              //  []);
-
-
-      //console.log("*********************** 0th row = ", result.rows.item(0));
-      //console.log("********************************** RESULT = ", result);
-      //console.log("********************************** RESULT size = ", result.rows.length);
-      //return result;
-//}
-
 
 function getChartView(sourceType: DataSourceType, data: OverviewSourceRow, query: DataDrivenQuery | undefined, highlightedDays: { [key: number]: boolean | undefined } | undefined): any {
 
@@ -386,7 +325,9 @@ export const DataSourceChartFrame = React.memo((props: {
         [props.data.source, props.data.today, measureUnitType])
 
     //console.log("((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))) ", getChartView(spec.type, props.data, props.filter, props.highlightedDays));
+
     console.log("&*&*&* In DataSourceChartFrame.tsx props.data.statistics = ", props.data.statistics);
+
     return <View style={props.flat === true ? styles.containerStyleFlat : styles.containerStyle}>
         {props.showHeader !== false ?
             <View style={styles.headerStyle}>

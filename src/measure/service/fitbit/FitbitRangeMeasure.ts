@@ -29,23 +29,23 @@ export abstract class FitbitRangeMeasure<
 
     let queryResult: Array<QueryResultType>
 
-    if (tryPrefetch === true && this.core.isPrefetchAvailable() === true) {
-      try {
-        const prefetchedResult = await this.queryFunc(startDate, endDate, true)
-        if (prefetchedResult != null) {
-          const queryEndDate = (prefetchedResult as any)["queryEndDate"]
-          if(queryEndDate != null && queryEndDate < endDate){
-            console.log("prefetched date is finished earlier than the queried range. Fill the rest with the Fitbit server data.")
-            const serverData = await this.queryFunc(queryEndDate, endDate, false)
-            queryResult = [prefetchedResult, serverData]
-          }else{
-            queryResult = [prefetchedResult]
-          }
-        }
-      } catch (ex) {
-        console.log("prefetch error in ", this.resourcePropertyKey)
-      }
-    }
+    // if (tryPrefetch === true && this.core.isPrefetchAvailable() === true) {
+    //   try {
+    //     const prefetchedResult = await this.queryFunc(startDate, endDate, true)
+    //     if (prefetchedResult != null) {
+    //       const queryEndDate = (prefetchedResult as any)["queryEndDate"]
+    //       if(queryEndDate != null && queryEndDate < endDate){
+    //         console.log("prefetched date is finished earlier than the queried range. Fill the rest with the Fitbit server data.")
+    //         const serverData = await this.queryFunc(queryEndDate, endDate, false)
+    //         queryResult = [prefetchedResult, serverData]
+    //       }else{
+    //         queryResult = [prefetchedResult]
+    //       }
+    //     }
+    //   } catch (ex) {
+    //     console.log("prefetch error in ", this.resourcePropertyKey)
+    //   }
+    // }
 
     if (queryResult == null) {
       const chunks = DateTimeHelper.splitRange(startDate, endDate, this.maxQueryRangeLength);

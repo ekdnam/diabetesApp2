@@ -473,9 +473,11 @@ const YearPicker = React.memo((props: { year: number, onYearSelected: (year: num
         fetchInitialDate()
     }, [serviceKey])
 
-
+    const getTodayNew: any = () => {
+        return new Date();
+    }
     const maximumYear = useMemo(() => {
-        return getYear(DataServiceManager.instance.getServiceByKey(serviceKey).getToday())
+        return getYear(getTodayNew());
     }, [serviceKey])
 
     const yearLabels: Array<string> = useMemo(() => getNumberSequence(minimumYear, maximumYear).map(y => y.toString()), [minimumYear, maximumYear])
@@ -524,7 +526,8 @@ interface DateButtonProps {
 const DateButton = React.forwardRef((props: DateButtonProps, ref: any) => {
 
     const serviceKey = useSelector((appState: ReduxAppState) => appState.settingsState.serviceKey)
-    const today = DataServiceManager.instance.getServiceByKey(serviceKey).getToday()
+    // const today = DataServiceManager.instance.getServiceByKey(serviceKey).getToday()
+    const today = new Date();
 
     const date = DateTimeHelper.toDate(props.date)
     const dateString = format(date, props.overrideFormat || "MMM dd, yyyy")
@@ -589,7 +592,11 @@ export const DateBar = React.memo((props: {
     const swipedFeedbackRef = useRef<SwipedFeedback>(null)
 
     const serviceKey = useSelector((appState: ReduxAppState) => appState.settingsState.serviceKey)
-    const getToday = DataServiceManager.instance.getServiceByKey(serviceKey).getToday
+
+    const getTodayNew: any = () => {
+        return new Date();
+    }
+    const getToday = getTodayNew;
 
     const makeShiftDay = useMemo(() => (amount: number, interactionContext: InteractionContext) => () => {
         const newDate = addDays(DateTimeHelper.toDate(date), amount)

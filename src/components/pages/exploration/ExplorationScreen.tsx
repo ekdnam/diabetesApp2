@@ -288,11 +288,12 @@ class ExplorationScreen extends React.PureComponent<ExplorationProps, State> {
     }
 
     private async prepare() {
-        this.setPrepareStatus(PrepareStatus.ACQUIRING_PERMISSION)
+        this.setPrepareStatus(PrepareStatus.PREPARED)
+        // const permissionResult = await this.checkPermission()
         const permissionResult = await this.checkPermission()
         if (permissionResult === 'granted') {
             console.log("All permissions are granted. Proceed to activation..")
-            await this.performServiceActivationPhase()
+            // await this.performServiceActivationPhase()
         } else if (permissionResult === 'forwarded') {
             console.log("I will wait the user to return from the permission settings.")
         } else {
@@ -443,7 +444,7 @@ class ExplorationScreen extends React.PureComponent<ExplorationProps, State> {
     render() {
 
         return <TodayContext.Provider value={DateTimeHelper.toNumberedDateFromDate(
-            DataServiceManager.instance.getServiceByKey(this.props.selectedServiceKey).getToday()
+            new Date()
         )}>
 
             <View style={StyleTemplates.screenDefaultStyle}>
@@ -456,9 +457,9 @@ class ExplorationScreen extends React.PureComponent<ExplorationProps, State> {
 
                 {
                     this.state.prepareStatus === PrepareStatus.FAILED ? <View style={[styles.mainContainerStyle, styles.perpareFailedContainerStyle]}>
-                        <Text style={styles.prepareFailedTextStyle}>Activate to use Data@Hand.</Text>
-                        <Button type="outline" title="Activate Again" onPress={this.onPressActivateButton} />
-                    </View> : <>
+                    <Text style={styles.prepareFailedTextStyle}>Activate to use Data@Hand.</Text>
+                    <Button type="outline" title="Activate Again" onPress={this.onPressActivateButton} />
+                </View> : <>
 
 
                             <View style={styles.mainContainerStyle}>

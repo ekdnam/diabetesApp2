@@ -245,6 +245,10 @@ function mapStateToProps(appState: ReduxAppState, ownProps: Props): Props {
     //const dataList: Array<any> = (source === DataSourceType.Weight ? sourceRangedData.data.logs : sourceRangedData.data).slice(0)
     //dataList.sort((a: any, b: any) => b["numberedDate"] - a["numberedDate"])
 
+    const getTodayNew: any = () => {
+        return new Date();
+    }
+    
     return {
         ...ownProps,
         source,
@@ -254,7 +258,7 @@ function mapStateToProps(appState: ReduxAppState, ownProps: Props): Props {
         isLoadingData: appState.explorationDataState.isBusy,
         pressedDate,
         dataDrivenQuery: appState.explorationState.info.dataDrivenQuery,
-        getToday: DataServiceManager.instance.getServiceByKey(appState.settingsState.serviceKey).getToday
+        getToday: getTodayNew
     }
 }
 
