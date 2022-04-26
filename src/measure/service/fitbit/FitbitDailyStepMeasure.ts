@@ -57,6 +57,7 @@ async createTableAndInsertRows(): any {
      // await (await this.open()).executeSql('DROP TABLE IF EXISTS blood_glucose_level', []);
 
      console.log("-------------------------------------- In createTableAndInsertRows() method");
+
        await (await this.open()).executeSql('CREATE TABLE IF NOT EXISTS blood_glucose_level(dayOfWeek INTEGER, month INTEGER, numberedDate DATE, value INTEGER, year INTEGER)', []);
        //await (await this.open()).executeSql('delete from blood_glucose_level', []);
        //console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ In FitbitDailyStepMeasure.ts all dbrpws deleted ");
@@ -66,6 +67,15 @@ async createTableAndInsertRows(): any {
 
          /* row 0 of StepCount data */
          // {"dayOfWeek": 0, "month": 8, "numberedDate": 20120819, "value": 2176, "year": 2012}
+
+
+
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA In FitbitDailyStepMeasure.ts - createTableAndInsertRows() - fetching data from StepCountIntraDay Table");
+        const [resultStepCount] = await (await this.open()).executeSql('select * from StepCountIntraDay limit 10', []);
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA In FitbitDailyStepMeasure.ts - createTableAndInsertRows() - fetching data from StepCountIntraDay Table, data = ", resultStepCount.rows.item(0));
+
+        /* row 0 of StepCount data */
+        // {"hourlySteps": "0|19|0|0|0|12|263|1034|837|124|349|56|299|6|1774|43|206|2722|31|145|122|24|2036|0", "numberedDate": 20220121}
 
         const [result] = await (await this.open()).executeSql('select dayOfWeek, month, numberedDate, value, year from blood_glucose_level', []);
 
@@ -504,6 +514,17 @@ async createTableAndInsertRows(): any {
             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 5, 3, 20220304, 117, 2022]);
             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 6, 3, 20220305, 68, 2022]);
             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 3, 20220306, 128, 2022]);
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 1, 3, 20220307, 108, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 2, 3, 20220308, 190, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 3, 3, 20220309, 195, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 4, 3, 20220310, 190, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 5, 3, 20220311, 145, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 6, 3, 20220312, 210, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 3, 20220313, 172, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 1, 3, 20220314, 160, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 2, 3, 20220315, 186, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 3, 3, 20220316, 170, 2022]);
+//             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 4, 3, 20220317, 135, 2022]);
 
 
         }
@@ -567,6 +588,8 @@ async performDatabaseOperation(startDate: number, endDate: number) : any {
               temp.push(finalResult2.rows.item(i));
 //               console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVV",result.rows.item(i));
          }
+
+    console.log("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ In FitbitDailyStepMeasure.ts - fetchData() finalResult2 = ",finalResult2);
     console.log("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",finalResult2);
     console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",finalResult2.rows.item(0));
 
@@ -588,6 +611,9 @@ async performDatabaseOperation(startDate: number, endDate: number) : any {
         {label: STATISTICS_LABEL_RANGE+ " ", valueText: commaNumber(rangedData.min) + " - " + commaNumber(rangedData.max)}*/
       ]
     } as StepCountRangedData
+
+    console.log("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZH In FitbitDailyStepMeasure.ts - fetchData() statistics = ", base.statistics);
+    console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII",base);
 
     // console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII",base);
     return base

@@ -21,7 +21,7 @@ import { Platform, UIManager } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { theme } from '@style/Theme';
-
+//import { createStackNavigator } from 'react-navigation';
 if (
   Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -30,6 +30,18 @@ if (
 }
 
 const { store, persistor } = CreateStore()
+/*AppNavigator = createStackNavigator(
+
+);
+class ProfileScreen extends React.Component {
+    render() {
+        return (
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                <Text>Profile Screen</Text>
+            </View>
+    );
+    }
+}*/
 
 class App extends React.Component {
 
@@ -55,12 +67,14 @@ class App extends React.Component {
 
   render() {
     return <NavigationContainer>
-      
+
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaProvider>
             <ThemeProvider theme={theme}>
-              <AppNavigator />
+              <AppNavigator/>
+
+
             </ThemeProvider>
           </SafeAreaProvider>
         </PersistGate>

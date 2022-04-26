@@ -34,7 +34,8 @@ import StyledText from 'react-native-styled-text';
 
 const INDEX_AGGREGATED = 0
 const INDEX_SUM = 1
-const SEGEMENTED_VALUES = ["Daily Average", "Total"]
+//const SEGEMENTED_VALUES = ["Daily Average", "Total"]
+const SEGEMENTED_VALUES = ["Daily Average"]
 
 const xAxisHeight = 70
 const yAxisWidth = 70
@@ -154,8 +155,14 @@ class MultiRangeComparisonMainPanel extends React.PureComponent<Props, State>{
 
 
     render() {
+        console.log("$1 IN MultiRangeComparisonMainPanel.tsx this.props.data.data[0].range = ", this.props.data.data[0].range);
+        console.log("$2 IN MultiRangeComparisonMainPanel.tsx this.props.data.data[0].value = ", this.props.data.data[0].value);
+        console.log("$3 IN MultiRangeComparisonMainPanel.tsx this.props.data.data[1].range = ", this.props.data.data[1].range);
+        console.log("$4 IN MultiRangeComparisonMainPanel.tsx this.props.data.data[1].value = ", this.props.data.data[1].value);
+        // console.log("IN MultiRangeComparisonMainPanel.tsx this.props.data = ", this.props.data);
 
         if (this.props.data == null || this.props.data.data.length === 0) {
+            console.log("999 IN MultiRangeComparisonMainPanel.tsx entered in if ");
             return <HorizontalPullToActionContainer
                 style={styles.containerStyle}
                 onPulled={this.onPulledFromSide}
@@ -218,6 +225,10 @@ class MultiRangeComparisonMainPanel extends React.PureComponent<Props, State>{
         const scaleX = scaleBand<number>().domain(indices).range([0, chartArea.width]).padding(0.55).paddingOuter(0.25)
         const scaleY = scaleLinear().range([chartArea.height, 0])
         const availableData = this.props.data.data.filter(d => d.value != null && d.value.n > 0)
+
+        console.log("$#$% MultiRangeComparisonMainPanel.tsx this.props.data.data = ", this.props.data.data);
+        console.log("$#$% MultiRangeComparisonMainPanel.tsx availableData = ", availableData);
+
         if (aggregationSettingIndex === INDEX_AGGREGATED) {
             scaleY.domain([startFromZero === true ? 0 : Math.min(min(availableData, (d: any) => {
                 if (isRanged === true) {
@@ -260,15 +271,7 @@ class MultiRangeComparisonMainPanel extends React.PureComponent<Props, State>{
         return <HorizontalPullToActionContainer
             style={styles.containerStyle}
             onPulled={this.onPulledFromSide}
-        >{
-                this.props.sumSupported === true ? <SegmentedControl values={SEGEMENTED_VALUES}
-                    appearance={"light"}
-                    selectedIndex={aggregationSettingIndex}
-                    style={styles.segmentedControlContainer}
-                    enabled={this.props.allRangesAreSingleDay !== true}
-                    onValueChange={this.onSegmentedValueChange} /> : null
-            }
-
+        >
             {
                 aggregationSettingIndex === INDEX_AGGREGATED ? (this.props.source === DataSourceType.SleepRange ?
                     <View style={styles.rangeLegendContainerStyle}>

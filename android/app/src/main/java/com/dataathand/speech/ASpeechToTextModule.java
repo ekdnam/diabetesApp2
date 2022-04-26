@@ -10,6 +10,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import android.util.Log;
 
 public abstract class ASpeechToTextModule extends ReactContextBaseJavaModule {
 
@@ -76,6 +77,8 @@ public abstract class ASpeechToTextModule extends ReactContextBaseJavaModule {
     protected void emitReceivedEvent(String text) {
         WritableMap resultParams = Arguments.createMap();
         resultParams.putString("text", text);
+        Log.d("MicrosoftSpeech", "&&&&&&&&&&&&&&&&&&&&&&& ASpeechToTextModule -> in emitReceivedEvent() - resultParams = ");
+        // Log.d("MicrosoftSpeech", resultParams);
         getDeviceEmitter().emit(EVENT_RECEIVED, resultParams);
     }
 

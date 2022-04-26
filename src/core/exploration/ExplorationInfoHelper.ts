@@ -72,6 +72,7 @@ class ExplorationInfoHelper {
       case ExplorationType.C_CyclicDetail_Daily:
       case ExplorationType.C_CyclicDetail_Range:
       case ExplorationType.C_TwoRanges:
+        console.log("#$#$#$ In ExplorationInfoHelper.ts in getMode() reached in case of ExplorationType.C_TwoRanges ");
         return ExplorationMode.Compare;
       case ExplorationType.Comp:
         return ExplorationMode.Comp;
@@ -100,6 +101,7 @@ class ExplorationInfoHelper {
 
   getDataSourceSpecInInfo(info: ExplorationInfo): DataSourceSpec | null {
     const dataSource = this.getParameterValue<DataSourceType>(info, ParameterType.DataSource)
+    console.log("%$%$% In ExplorationInfoHelper.ts dataSource = ", dataSource);
     if (dataSource) {
       return DataSourceManager.instance.getSpec(dataSource)
     } else return null
@@ -125,10 +127,13 @@ class ExplorationInfoHelper {
       case ExplorationType.C_Cyclic:
       case ExplorationType.C_CyclicDetail_Daily:
       case ExplorationType.C_CyclicDetail_Range:
-      case ExplorationInfo.Comp: return "Comp";
+//      case ExplorationInfo.Comp: return "Comp";
       case ExplorationType.C_TwoRanges:
         {
           const spec = this.getDataSourceSpecInInfo(info)
+
+          console.log("%$%$% In ExplorationInfoHelper.ts spec = ", spec);
+
           if (spec)
             return spec.name + " Comparison"
         } break;

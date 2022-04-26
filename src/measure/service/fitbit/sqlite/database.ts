@@ -572,11 +572,20 @@ export class FitbitLocalDbManager {
     const query =
       `SELECT 
       ${aggregatedColumnInfos.map(info => `${info.type}(${info.aggregatedColumnName}) as ${info.as}`).join(',')}
-       FROM ${tableName} WHERE ${condition}`;
+       FROM blood_glucose_level WHERE ${condition}`;
     const [result] = await (await this.open()).executeSql(query, parameters);
+
+    console.log("QQQ In database.ts - getAggregatedValue() - query = ", query);
+    console.log("QQQ In database.ts - getAggregatedValue() - parameters = ", parameters);
+
+
     if (result.rows.length > 0) {
+      console.log("QQQ In database.ts - getAggregatedValue() - result = ", result.rows.item(0));
       return result.rows.item(0);
-    } else return null;
+    } else {
+        console.log("QQQ In database.ts - getAggregatedValue() - result = NULL after executing the SQL query");
+        return null;
+    }
   }
 
 

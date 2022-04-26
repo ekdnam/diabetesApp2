@@ -256,12 +256,14 @@ class ExplorationDataResolver {
     }
 
     console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling service.fetchData() function");
-    // console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling source = ", source);
-    // console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[0] = ", range[0]);
-    // console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[1] = ", range[1]);
+
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling source = ", source);
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[0] = ", range[0]);
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[1] = ", range[1]);
 
     const data = await service.fetchData(source, range[0], range[1])
-    // console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() data from service.fetchData() function = ", data);
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() data from service.fetchData() function = ", data);
+
 
     console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling service.getPreferredValueRange(source) function");
     data.preferredValueRange = await service.getPreferredValueRange(source)
@@ -407,6 +409,8 @@ class ExplorationDataResolver {
     const dataA = await selectedService.fetchRangeAggregatedData(source, rangeA[0], rangeA[1])
     const dataB = await selectedService.fetchRangeAggregatedData(source, rangeB[0], rangeB[1])
 
+    console.log("Vedangi In ExplorationDataResolver.ts in loadTwoRangeComparisonData() dataA = ", dataA);
+    console.log("Vedangi In ExplorationDataResolver.ts in loadTwoRangeComparisonData() dataB = ", dataB);
     return {
       data: [
         { range: rangeA, value: dataA },
