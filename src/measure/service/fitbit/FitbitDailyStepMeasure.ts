@@ -70,9 +70,9 @@ async createTableAndInsertRows(): any {
 
 
 
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA In FitbitDailyStepMeasure.ts - createTableAndInsertRows() - fetching data from StepCountIntraDay Table");
-        const [resultStepCount] = await (await this.open()).executeSql('select * from StepCountIntraDay limit 10', []);
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA In FitbitDailyStepMeasure.ts - createTableAndInsertRows() - fetching data from StepCountIntraDay Table, data = ", resultStepCount.rows.item(0));
+//         console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA In FitbitDailyStepMeasure.ts - createTableAndInsertRows() - fetching data from StepCountIntraDay Table");
+//         const [resultStepCount] = await (await this.open()).executeSql('select * from StepCountIntraDay limit 10', []);
+//         console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA In FitbitDailyStepMeasure.ts - createTableAndInsertRows() - fetching data from StepCountIntraDay Table, data = ", resultStepCount.rows.item(0));
 
         /* row 0 of StepCount data */
         // {"hourlySteps": "0|19|0|0|0|12|263|1034|837|124|349|56|299|6|1774|43|206|2722|31|145|122|24|2036|0", "numberedDate": 20220121}
