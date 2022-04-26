@@ -46,6 +46,7 @@ export class DataServiceManager {
   }
 
   getServiceByKey(serviceKey: string): DataService {
+    console.log("In DataServiceManager.ts - getServiceByKey() ");
     return this.installedServices.find(s => s.key === serviceKey)!
   }
 }

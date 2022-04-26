@@ -81,16 +81,32 @@ export abstract class FitbitServiceMeasure extends FitbitServiceMeasureBase {
 
   async getBoxPlotInfoOfDataset(key: string = null): Promise<BoxPlotInfo> {
     const cacheKey = "fitbit:value_range:" + this.key + ":" + key
-    const cached = await this.core.localAsyncStorage.getObject(cacheKey)
-    if (cached) {
-      return cached
-    } else {
-      const result = await this.getBoxPlotInfoOfDatasetFromDb(key)
-      if (result.median != null) {
-        this.core.localAsyncStorage.set(cacheKey, result)
-      }
-      return result
-    }
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ In FitbitServiceMeasure in getBoxPlotInfoOfDataset() cacheKey = ", cacheKey);
+
+    const result = await this.getBoxPlotInfoOfDatasetFromDb(key)
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ In FitbitServiceMeasure in getBoxPlotInfoOfDataset() Entered in else part, result  = ", result);
+          if (result.median != null) {
+            this.core.localAsyncStorage.set(cacheKey, result)
+          }
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ In FitbitServiceMeasure in getBoxPlotInfoOfDataset() result  = ", result);
+    return result
+
+//     const cacheKey = "fitbit:value_range:" + this.key + ":" + key
+//     console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ In FitbitServiceMeasure in getBoxPlotInfoOfDataset() cacheKey = ", cacheKey);
+//     const cached = await this.core.localAsyncStorage.getObject(cacheKey)
+//     console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ In FitbitServiceMeasure in getBoxPlotInfoOfDataset() cached = ", cached);
+//     if (cached) {
+//       return cached
+//     } else {
+//       const result = await this.getBoxPlotInfoOfDatasetFromDb(key)
+//       console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ In FitbitServiceMeasure in getBoxPlotInfoOfDataset() Entered in else part, result  = ", result);
+//       if (result.median != null) {
+//         this.core.localAsyncStorage.set(cacheKey, result)
+//       }
+//       console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ In FitbitServiceMeasure in getBoxPlotInfoOfDataset() result  = ", result);
+//       return result
+//     }
+
   }
 
   async clearLocalCache() {

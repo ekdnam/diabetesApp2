@@ -78,6 +78,11 @@ export function startLoadingForInfo(info?: ExplorationInfo, force?: boolean) {
 
       console.log('Process data load');
 
+      console.log("*** In reducers.ts file explorationInfo = ", explorationInfo);
+      console.log("*** In reducers.ts file currentAppState.settingsState.serviceKey = ", currentAppState.settingsState.serviceKey);
+      console.log("*** In reducers.ts file currentAppState.explorationDataState.serviceKey = ", currentAppState.explorationDataState.serviceKey);
+      console.log("*** In reducers.ts file currentAppState.explorationDataState.data = ", currentAppState.explorationDataState.data);
+
       const data = await explorationDataResolver.loadData(
         explorationInfo,
         currentAppState.settingsState.serviceKey,
@@ -86,7 +91,13 @@ export function startLoadingForInfo(info?: ExplorationInfo, force?: boolean) {
         force !==true ? currentAppState.explorationDataState.data : undefined,
       );
 
+      console.log("*** In reducers.ts file data = ", data);
+
       currentAppState = getState();
+      console.log("*** In reducers.ts file currentAppState = ", currentAppState);
+      console.log("*** In reducers.ts file taskId = ", taskId);
+      console.log("*** In reducers.ts file currentAppState.explorationDataState.ongoingTaskId = ", currentAppState.explorationDataState.ongoingTaskId);
+
       if (taskId === currentAppState.explorationDataState.ongoingTaskId) {
         console.log('Completed data load');
         dispatch({

@@ -28,23 +28,37 @@ class ExplorationDataResolver {
     prevServiceKey?: string,
     prevData?: any,
   ): Promise<any> {
+    console.log("In ExplorationDataResolver.ts in loadData() explorationInfo = ", explorationInfo);
+    console.log("In ExplorationDataResolver.ts in loadData() selectedServiceKey = ", selectedServiceKey);
+    console.log("In ExplorationDataResolver.ts in loadData() prevInfo = ", prevInfo);
+    console.log("In ExplorationDataResolver.ts in loadData() prevServiceKey = ", prevServiceKey);
+    console.log("In ExplorationDataResolver.ts in loadData() prevData = ", prevData);
+
     const usePrevData = selectedServiceKey === prevServiceKey
     switch (explorationInfo.type) {
       case ExplorationType.B_Overview:
+        console.log("In ExplorationDataResolver.ts in loadData() Reached in ExplorationType.B_Overview case of the switch ");
         return this.loadOverviewData(explorationInfo, selectedServiceKey, usePrevData === true ? prevInfo : undefined, usePrevData === true ? prevData : null);
       case ExplorationType.B_Range:
+        console.log("In ExplorationDataResolver.ts in loadData() Reached in ExplorationType.B_Range case of the switch ");
         return this.loadBrowseRangeData(explorationInfo, selectedServiceKey, usePrevData === true ? prevInfo : undefined, usePrevData === true ? prevData : null);
       case ExplorationType.B_Day:
+        console.log("In ExplorationDataResolver.ts in loadData() Reached in ExplorationType.B_Day case of the switch ");
         return this.loadIntraDayData(explorationInfo, selectedServiceKey)
       case ExplorationType.C_Cyclic:
+          console.log("In ExplorationDataResolver.ts in loadData() Reached in ExplorationType.C_Cyclic case of the switch ");
         return this.loadCyclicComparisonData(explorationInfo, selectedServiceKey)
       case ExplorationType.C_TwoRanges:
+        console.log("In ExplorationDataResolver.ts in loadData() Reached in ExplorationType.C_TwoRanges case of the switch ");
         return this.loadTwoRangeComparisonData(explorationInfo, selectedServiceKey)
       case ExplorationType.C_CyclicDetail_Range:
+        console.log("In ExplorationDataResolver.ts in loadData() Reached in ExplorationType.C_CyclicDetail_Range case of the switch ");
         return this.loadCyclicRangeDetailData(explorationInfo, selectedServiceKey)
       case ExplorationType.C_CyclicDetail_Daily:
+        console.log("In ExplorationDataResolver.ts in loadData() Reached in ExplorationType.C_CyclicDetail_Daily case of the switch ");
         return this.loadCyclicDailyDetailData(explorationInfo, selectedServiceKey)
       default:
+        console.log("In ExplorationDataResolver.ts in loadData() Reached in default case of the switch ");
         Promise.reject({ error: 'Unsupported exploration type.' });
     }
 
@@ -82,6 +96,7 @@ class ExplorationDataResolver {
   }
 
   private async loadBrowseRangeDataImpl(range: [number, number], source: DataSourceType, service: DataService, prevData?: OverviewSourceRow): Promise<OverviewSourceRow> {
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl()");
     if (prevData) {
       const benchmarkStart = Date.now()
       const newQueryRegion = DateTimeHelper.subtract(range, prevData.range as [number, number])
@@ -101,6 +116,7 @@ class ExplorationDataResolver {
 
         switch (source) {
           case DataSourceType.StepCount:
+          case DataSourceType.BloodGlucose:
           case DataSourceType.HeartRate:
           case DataSourceType.SleepRange:
           case DataSourceType.HoursSlept:
@@ -153,6 +169,7 @@ class ExplorationDataResolver {
 
         switch (source) {
           case DataSourceType.StepCount:
+          case DataSourceType.BloodGlucose:
           case DataSourceType.HeartRate:
             newData.statistics.forEach(statistic => {
               switch (statistic.type) {
@@ -238,15 +255,25 @@ class ExplorationDataResolver {
       }
     }
 
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling service.fetchData() function");
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling source = ", source);
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[0] = ", range[0]);
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling range[1] = ", range[1]);
+
     const data = await service.fetchData(source, range[0], range[1])
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() data from service.fetchData() function = ", data);
+
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling service.getPreferredValueRange(source) function");
     data.preferredValueRange = await service.getPreferredValueRange(source)
 
+    console.log("In ExplorationDataResolver.ts in loadBrowseRangeDataImpl() calling service.getGoalValue(source) function");
     data.goal = await service.getGoalValue(source)
     
     return data
   }
 
   private loadOverviewData(info: ExplorationInfo, selectedServiceKey: string, prevInfo?: ExplorationInfo, prevData?: any): Promise<OverviewData> {
+    console.log("In ExplorationDataResolver.ts in loadOverviewData()");
     const range = explorationInfoHelper.getParameterValue<[number, number]>(
       info,
       ParameterType.Range,
@@ -260,10 +287,14 @@ class ExplorationDataResolver {
       DataSourceManager.instance.supportedDataSources.map(source => {
         let prevSourceRowData: OverviewSourceRow
         if (prevInfo != null && prevData != null) {
+          console.log("In ExplorationDataResolver.ts in loadOverviewData() prevInfo != null && prevData != null -> entered in if part");
           if (prevInfo.type === ExplorationType.B_Overview) {
+            console.log("In ExplorationDataResolver.ts in loadOverviewData() prevInfo.type === ExplorationType.B_Overview -> entered in if part");
             prevSourceRowData = (prevData as OverviewData).sourceDataList.find(e => e.source === source.type)!
+            console.log("In ExplorationDataResolver.ts in loadOverviewData() prevSourceRowData fetched", prevSourceRowData);
           } else if (prevInfo.type === ExplorationType.B_Range) {
             const prevSource = explorationInfoHelper.getParameterValue<DataSourceType>(prevInfo, ParameterType.DataSource)
+            console.log("In ExplorationDataResolver.ts in loadOverviewData() in elseif part -> prevSource = ", prevSource);
             if (prevSource === source.type) {
               prevSourceRowData = prevData
             }
@@ -304,7 +335,13 @@ class ExplorationDataResolver {
     const cycleType = explorationInfoHelper.getParameterValue<CyclicTimeFrame>(info, ParameterType.CycleType)
 
     const data = await selectedService.fetchCyclicAggregatedData(source, range[0], range[1], cycleType)
+    console.log("%%% In ExplorationDataResolver.ts in loadCyclicComparisonData() source = ", source);
+    console.log("%%% In ExplorationDataResolver.ts in loadCyclicComparisonData() range[0] = ", range[0]);
+    console.log("%%% In ExplorationDataResolver.ts in loadCyclicComparisonData() range[1] = ", range[1]);
+    console.log("%%% In ExplorationDataResolver.ts in loadCyclicComparisonData() cycleType = ", cycleType);
+    console.log("%%% In ExplorationDataResolver.ts in loadCyclicComparisonData() data = ", data);
     data.preferredValueRange = await selectedService.getPreferredValueRange(source)
+    console.log("%%% In ExplorationDataResolver.ts in loadCyclicComparisonData() preferredValueRange = ", data.preferredValueRange);
     return data
   }
 
@@ -370,6 +407,8 @@ class ExplorationDataResolver {
     const dataA = await selectedService.fetchRangeAggregatedData(source, rangeA[0], rangeA[1])
     const dataB = await selectedService.fetchRangeAggregatedData(source, rangeB[0], rangeB[1])
 
+    console.log("Vedangi In ExplorationDataResolver.ts in loadTwoRangeComparisonData() dataA = ", dataA);
+    console.log("Vedangi In ExplorationDataResolver.ts in loadTwoRangeComparisonData() dataB = ", dataB);
     return {
       data: [
         { range: rangeA, value: dataA },

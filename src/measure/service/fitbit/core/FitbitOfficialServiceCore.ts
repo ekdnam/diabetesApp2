@@ -361,6 +361,7 @@ export default class FitbitOfficialServiceCore implements FitbitServiceCore {
     }
 
     private async fetchGoalValueImpl(storageKey: string, url: string, propertyName: string): Promise<number | undefined> {
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX In FitbitOfficialServiceCore.ts fetchGoalValueImpl() funation ");
         const stored = await this.localAsyncStorage.getString(storageKey)
         if (stored != null) {
             const split = stored.split(INTRADAY_SEPARATOR_BETWEEN)
@@ -386,12 +387,13 @@ export default class FitbitOfficialServiceCore implements FitbitServiceCore {
 
             return value
         } catch (err) {
-            console.log(err)
+            console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX In FitbitOfficialServiceCore.ts fetchGoalValueImpl() function throwing exception", err);
             return undefined;
         }
     }
 
     fetchStepCountGoal(): Promise<number | undefined> {
+        console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW In FitbitOfficialServiceCore.ts fetchStepCountGoal() calling fetchGoalValueImpl() ");
         return this.fetchGoalValueImpl(STORAGE_KEY_GOAL_STEP, FITBIT_DAILY_STEP_GOAL_URL, "steps")
     }
 

@@ -1,5 +1,6 @@
 import { createStackNavigator, HeaderBackButton, TransitionPresets } from '@react-navigation/stack';
 import { ExplorationScreen } from '@components/pages/exploration/ExplorationScreen';
+import { HomeScreen } from '@components/pages/exploration/HomeScreen';
 import { SettingsScreen } from '@components/pages/settings/SettingsScreen';
 import { ServiceSelectionScreen } from '@components/pages/sources/service-wizard/ServiceSelectionScreen';
 import React, { useMemo } from 'react';
@@ -11,6 +12,11 @@ export type RootStackParamList = {
 }
 
 export type SettingsSteckParamList = {
+  Main: undefined,
+  ServiceWizardModal: undefined
+}
+
+export type HomeScreenSteckParamList = {
   Main: undefined,
   ServiceWizardModal: undefined
 }
@@ -58,6 +64,11 @@ export default () => {
       name="Settings"
       component={SettingsNavigator}
     />
+    <Stack.Screen
+              name="HomeScreen"
+              component={HomeScreen}
+              options={{ title: 'Welcome' }}
+            />
 
   </Stack.Navigator>
 }

@@ -87,6 +87,9 @@ export const SpeechInputPanel = React.memo(() => {
 
     switch (speechStatus) {
         case SpeechRecognizerSessionStatus.Waiting:
+        if(dictationResult!=null){
+                console.log("********************* dictationResult", dictationResult.text);
+                }
             return <View style={styles.containerStyle}>
                 <View style={styles.titleContainerStyle}>
                     <Spinner size={20} isVisible={true} type="FadingCircle" color={Colors.accent} />

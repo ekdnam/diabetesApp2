@@ -100,8 +100,8 @@ class DataSourceDetailNavigationPanel extends React.PureComponent<Props, State>{
     constructor(props: Props) {
         super(props)
 
-        const dataList: Array<any> = (this.props.source === DataSourceType.Weight ? props.dataset.data.logs : props.dataset.data).slice(0)
-        dataList.sort((a: any, b: any) => b["numberedDate"] - a["numberedDate"])
+        //const dataList: Array<any> = (this.props.source === DataSourceType.Weight ? props.dataset.data.logs : props.dataset.data).slice(0)
+        //dataList.sort((a: any, b: any) => b["numberedDate"] - a["numberedDate"])
 
 
         this.state = {
@@ -242,8 +242,8 @@ function mapStateToProps(appState: ReduxAppState, ownProps: Props): Props {
 
     const sourceRangedData = appState.explorationDataState.data as DataSourceBrowseData
 
-    const dataList: Array<any> = (source === DataSourceType.Weight ? sourceRangedData.data.logs : sourceRangedData.data).slice(0)
-    dataList.sort((a: any, b: any) => b["numberedDate"] - a["numberedDate"])
+    //const dataList: Array<any> = (source === DataSourceType.Weight ? sourceRangedData.data.logs : sourceRangedData.data).slice(0)
+    //dataList.sort((a: any, b: any) => b["numberedDate"] - a["numberedDate"])
 
     return {
         ...ownProps,

@@ -78,6 +78,9 @@ export default class FitbitService extends DataService {
       case DataSourceType.StepCount:
         boxPlotInfo = await this.dailyStepMeasure.getBoxPlotInfoOfDataset()
         break;
+      case DataSourceType.BloodGlucose:
+          boxPlotInfo = await this.dailyStepMeasure.getBoxPlotInfoOfDataset()
+          break;
       case DataSourceType.HeartRate:
         boxPlotInfo = await this.dailyHeartRateMeasure.getBoxPlotInfoOfDataset()
         break;
@@ -106,6 +109,9 @@ export default class FitbitService extends DataService {
       case DataSourceType.StepCount:
         tableName = FitbitLocalTableName.StepCount
         break;
+      case DataSourceType.BloodGlucose:
+          tableName = FitbitLocalTableName.BloodGlucose
+          break;
       case DataSourceType.HeartRate:
         tableName = FitbitLocalTableName.RestingHeartRate
         break;
@@ -162,6 +168,10 @@ export default class FitbitService extends DataService {
   ): Promise<any> {
     switch (dataSource) {
       case DataSourceType.StepCount:
+        console.log("In FitbitService.ts fetchDataImpl() function - DataSourceType.StepCount case of the switch - calling dailyStepMeasure.fetchData");
+        return await this.dailyStepMeasure.fetchData(start, end, includeStatistics, includeToday);
+      case DataSourceType.BloodGlucose:
+        console.log("In FitbitService.ts fetchDataImpl() function - DataSourceType.BloodGlucose case of the switch - calling dailyStepMeasure.fetchData");
         return await this.dailyStepMeasure.fetchData(start, end, includeStatistics, includeToday);
       case DataSourceType.HeartRate:
         return await this.dailyHeartRateMeasure.fetchData(start, end, includeStatistics, includeToday);
@@ -181,6 +191,10 @@ export default class FitbitService extends DataService {
     if (date <= now) {
       switch (intraDayDataSource) {
         case IntraDayDataSourceType.StepCount:
+          console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV In FitbitService.ts fetchIntraDayData() function - in switch - in case of IntraDayDataSourceType.StepCount - calling this.intradayStepMeasure.fetchData(date)");
+          return await this.intradayStepMeasure.fetchData(date);
+        case IntraDayDataSourceType.BloodGlucose:
+          console.log("QWQWQWQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ In FitbitService.ts fetchIntraDayData() function - in switch - in case of IntraDayDataSourceType.BloodGlucose - calling this.intradayStepMeasure.fetchData(date)");
           return await this.intradayStepMeasure.fetchData(date);
         case IntraDayDataSourceType.HeartRate:
           return await this.intradayHeartRateMeasure.fetchData(date);
@@ -204,6 +218,12 @@ export default class FitbitService extends DataService {
           end,
           cycle,
         );
+      case DataSourceType.BloodGlucose:
+          return await this.dailyStepMeasure.fetchCyclicGroupedData(
+            start,
+            end,
+            cycle,
+          );
       case DataSourceType.HeartRate:
         return await this.dailyHeartRateMeasure.fetchCyclicGroupedData(
           start,
@@ -238,6 +258,9 @@ export default class FitbitService extends DataService {
   ): Promise<IAggregatedValue | IAggregatedRangeValue> {
     switch (dataSource) {
       case DataSourceType.StepCount:
+        return await this.dailyStepMeasure.fetchRangeGroupedData(start, end);
+      case DataSourceType.BloodGlucose:
+        console.log("In FitbitService.ts fetchRangeAggregatedData() reached in case of BloodGlucose ");
         return await this.dailyStepMeasure.fetchRangeGroupedData(start, end);
       case DataSourceType.HeartRate:
         return await this.dailyHeartRateMeasure.fetchRangeGroupedData(start, end);
@@ -285,6 +308,8 @@ export default class FitbitService extends DataService {
   getGoalValue(dataSource: DataSourceType): Promise<number | undefined> {
     switch(dataSource){
       case DataSourceType.StepCount:
+        return this.core.fetchStepCountGoal()
+      case DataSourceType.BloodGlucose:
         return this.core.fetchStepCountGoal()
       //case DataSourceType.HoursSlept:
         //return this.core.fetchMinSleepDurationGoal()

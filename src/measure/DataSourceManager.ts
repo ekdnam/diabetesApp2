@@ -16,19 +16,25 @@ export class DataSourceManager {
 
   readonly supportedDataSources: ReadonlyArray<DataSourceSpec> = [
 
+//     {
+//       type: DataSourceType.StepCount,
+//       category: DataSourceCategory.Step,
+//       name: "Step Count",
+//       description: 'Step Count Walked',
+//     },
     {
-      type: DataSourceType.StepCount,
-      category: DataSourceCategory.Step,
-      name: "Step Count",
-      description: 'Step Count Walked',
+          type: DataSourceType.BloodGlucose,
+          category: DataSourceCategory.BloodGlucose,
+          name: "Blood Glucose",
+          description: 'Blood Glucose Level',
     },
-    {
+    /*{
       type: DataSourceType.HeartRate,
       category: DataSourceCategory.HeartRate,
       name: 'Resting Heart Rate',
       description:
         'Heart Rate BPM (Beats per Minute) measured at a specific moment',
-    },
+    },*/
 
     /*{
       type: DataSourceType.SleepRange,
@@ -43,12 +49,12 @@ export class DataSourceManager {
       name: 'Hours Slept',
       description: 'A length of sleep of the day',
     },*/
-    {
+    /*{
       type: DataSourceType.Weight,
       category: DataSourceCategory.Weight,
       name: 'Weight',
       description: 'Body weight measured at a specific moment',
-    },
+    },*/
   ];
 
   private _supportedIntradayDataSources = new Lazy(()=>{
@@ -76,6 +82,12 @@ export class DataSourceManager {
       category: DataSourceCategory.Step,
       name: "Step"
     }
+
+    this.dataSourceCategorySpecs[DataSourceCategory.BloodGlucose] = {
+      category: DataSourceCategory.BloodGlucose,
+      name: "Blood Glucose"
+    }
+
     /*this.dataSourceCategorySpecs[DataSourceCategory.Sleep] = {
       category: DataSourceCategory.Sleep,
       name: "Sleep"
@@ -92,8 +104,11 @@ export class DataSourceManager {
     }
 
     this.specMap = new Map<DataSourceType, DataSourceSpec>();
+    console.log("!!! In DataSourceManager.ts - adding entries in specMap = ");
     this.supportedDataSources.forEach(spec => {
       this.specMap.set(spec.type, spec)
+      console.log("!!! In DataSourceManager.ts - spec = ", spec);
+      console.log("!!! In DataSourceManager.ts - spec.type = ", spec.type);
     });
 
   }

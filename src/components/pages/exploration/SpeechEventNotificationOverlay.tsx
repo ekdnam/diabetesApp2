@@ -267,10 +267,7 @@ class SpeechEventNotificationOverlay extends React.PureComponent<{ dispatch: Dis
                 <Animated.View style={
                     {
                         transform: [{
-                            rotate: this.iconRotationProgress.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, 2 * Math.PI]
-                            })
+                            rotate: "0deg"
                         },
                         {
                             scale: this.iconScaleProgress
@@ -378,3 +375,7 @@ class SpeechEventNotificationOverlay extends React.PureComponent<{ dispatch: Dis
 
 const connected = connect(null, null, null, { forwardRef: true })(SpeechEventNotificationOverlay)
 export { connected as SpeechEventNotificationOverlay }
+// this.iconRotationProgress.interpolate({
+//                                 inputRange: [0, 1],
+//                                 outputRange: [0, 2 * Math.PI]
+//                             })

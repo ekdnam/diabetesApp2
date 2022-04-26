@@ -1,3 +1,4 @@
+import SQLite, { DatabaseParams } from 'react-native-sqlite-storage';
 import React, { useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from '@style/Colors';
@@ -19,6 +20,8 @@ import { StyleTemplates } from '@style/Styles';
 import { useSelector } from 'react-redux';
 import { ReduxAppState } from '@state/types';
 
+SQLite.DEBUG(false);
+SQLite.enablePromise(true);
 
 const lightTextColor = "#8b8b8b"
 
@@ -115,6 +118,12 @@ const styles = StyleSheet.create({
     }
 })
 
+var lengthVar;
+var range_start;
+var range_end;
+var sum;
+var avg_value;
+
 export interface TodayInfo {
     label: string;
     formatted: Array<{ text: string; type: 'unit' | 'value' }> | null;
@@ -126,13 +135,7 @@ function formatTodayValue(dataSource: DataSourceType, todayData: number | [numbe
     } as TodayInfo
 
     switch (dataSource) {
-        case DataSourceType.Weight:
-            info.label = "Recently"
-            break;
-        /*case DataSourceType.SleepRange:
-        case DataSourceType.HoursSlept:
-            info.label = "Last night"
-            break;*/
+
         default: info.label = "Today"
             break;
     }
@@ -146,75 +149,21 @@ function formatTodayValue(dataSource: DataSourceType, todayData: number | [numbe
                 },
                 { text: ' steps', type: 'unit' },
             ] : null
+
             break;
-        case DataSourceType.HeartRate:
+        case DataSourceType.BloodGlucose:
             info.formatted = todayData != null ? [
                 {
-                    text: todayData.toString(),
+                    text: commaNumber(todayData as number),
                     type: 'value',
                 },
-                {
-                    text: ' bpm',
-                    type: 'unit',
-                },
+                { text: ' mg/dL', type: 'unit' },
             ] : null
-            break;
-        case DataSourceType.Weight:
-            if (todayData) {
-                switch (unitType) {
-                    case MeasureUnitType.Metric:
-                        info.formatted = [{ type: 'value', text: (todayData as number).toFixed(1) }, { type: 'unit', text: ' kg' }]
-                        break;
-                    case MeasureUnitType.US:
-                        const convert = require('convert-units')
-                        info.formatted = [{ type: 'value', text: convert(todayData).from('kg').to('lb').toFixed(1) }, { type: 'unit', text: ' lb' }]
-                        break;
-                }
-            } else {
-                info.formatted = null
-            }
-            break;
-        case DataSourceType.HoursSlept:
-            if (todayData) {
-                var roundedSecs = todayData as number
-                info.formatted = []
-                if (roundedSecs % 60 >= 30) {
-                    roundedSecs = roundedSecs - (roundedSecs % 60) + 60
-                }
-                const hours = Math.floor(roundedSecs / 3600)
-                const minutes = Math.floor((roundedSecs % 3600) / 60)
-                if (hours > 0) {
-                    info.formatted.push({ type: 'value', text: hours + " " })
-                    info.formatted.push({ type: 'unit', text: "hr" + (minutes > 0 ? " " : "") })
-                }
 
-                if (hours > 0 && minutes > 0 || hours === 0) {
-                    info.formatted.push({ type: 'value', text: minutes + " " })
-                    info.formatted.push({ type: 'unit', text: 'min' })
-                }
-            } else {
-                info.formatted = null
-            }
             break;
-        /*case DataSourceType.SleepRange:
-            if (todayData) {
-                const pivot = startOfDay(new Date())
-                const actualBedTime = addSeconds(pivot, Math.round((todayData as any)[0]))
-                const actualWakeTime = addSeconds(pivot, Math.round((todayData as any)[1]))
-
-                info.formatted = [
-                    { type: 'value', text: format(actualBedTime, 'hh:mm ') },
-                    { type: 'unit', text: format(actualBedTime, 'a').toLowerCase() },
-                    { type: 'unit', text: ' - ' },
-                    { type: 'value', text: format(actualWakeTime, 'hh:mm ') },
-                    { type: 'unit', text: format(actualWakeTime, 'a').toLowerCase() },
-                ]
-            } else {
-                info.formatted = null
-            }
-            break;*/
     }
-
+    //console.log("%%%%%%%%%%%%%%%%%%%%%5");
+    //console.log(info);
     return info
 }
 
@@ -236,93 +185,180 @@ function formatStatistics(sourceType: DataSourceType, statisticsType: Statistics
                 case "avg": return commaNumber(Math.round(value));
                 case "range": return commaNumber(value[0]) + " - " + commaNumber(value[1])
                 case "total": return commaNumber(value)
-            }
-        case DataSourceType.HeartRate:
-            switch (statisticsType) {
-                case 'avg': return `${Math.round(value).toString()} bpm`
-                case 'range': return `${value[0]}  - ${value[1]} bpm`
-            }
-        case DataSourceType.Weight:
-            switch (measureUnitType) {
-                case MeasureUnitType.Metric:
-                    break;
-                case MeasureUnitType.US:
-                    {
-                        const convert = require('convert-units')
-                        if (statisticsType == 'range') {
-                            value = [convert(value[0]).from('kg').to('lb'), convert(value[1]).from('kg').to('lb')]
-                        } else {
-                            value = convert(value).from('kg').to('lb')
-                        }
-                    }
-                    break;
-            }
-            const unit = measureUnitType === MeasureUnitType.Metric ? 'kg' : 'lb'
-            switch (statisticsType) {
-                case 'avg': return value.toFixed(1) + " " + unit
-                case 'range': return `${value[0].toFixed(1)} - ${value[1].toFixed(1)} ${unit}`
-            }
+            break;
 
-        /*case DataSourceType.HoursSlept:
-            switch (statisticsType) {
-                case 'avg': return DateTimeHelper.formatDuration(Math.round(value), true)
-                case 'range': return DateTimeHelper.formatDuration(value[0], true) + " - " + DateTimeHelper.formatDuration(value[1], true)
-            }
+//                 case "avg": return avg_value;
+//                 case "range": return range_start + " - " + range_end
+//                 case "total": return sum
 
-        case DataSourceType.SleepRange:
-            const pivot = startOfDay(new Date())
-            const actualTime = addSeconds(pivot, Math.round(value))
-            return format(actualTime, 'hh:mm a').toLowerCase()*/
-    }
+            }
+        case DataSourceType.BloodGlucose:
+            switch (statisticsType) {
+                case "avg": return commaNumber(Math.round(value));
+                case "range": return commaNumber(value[0]) + " - " + commaNumber(value[1])
+                case "total": return commaNumber(value)
+                break;
+            }
+       }
 }
+/*
+function open(): Promise<SQLite.SQLiteDatabase> {
+
+    //console.log("try open the database:", );
+
+    _dbInitPromise = SQLite.openDatabase({ name: 'BloodGlucoseDatabaseTmp.db' })
+      .then(db => {
+        //console.log("db opened.")
+        return db
+          .transaction(tx => {
+          //console.log("-------------------------------------- Opening Database ");
+
+
+          //tx.executeSql('DROP TABLE IF EXISTS blood_glucose_level', []);
+
+          tx.executeSql(
+                        'CREATE TABLE IF NOT EXISTS blood_glucose_level(day_of_week INTEGER, month INTEGER, numberedDate DATE, value INTEGER, year INTEGER)',
+                        []
+                      );
+          }).then(tx => db)
+      })
+    return _dbInitPromise
+  }*/
+/*
+async function performDatabaseOperation() : any {
+
+//     console.log("-------------------------------------- Inserting into table ");
+
+      /*await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
+                                                              [1, 1, 20220126, 20000, 2022]);
+
+       await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
+                                                                    [ 2, 1, 20220127, 30058, 2022]);
+
+       await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
+                                                                    [ 3, 1, 20220128, 40000, 2022]);
+
+       await (await open()).executeSql('INSERT INTO blood_glucose_level (day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
+                                                                    [ 4, 1, 20220129, 50000, 2022]);
+       await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
+                                                                    [5, 1, 20220130, 2000, 2022]);
+
+       await (await open()).executeSql('INSERT INTO blood_glucose_level ( day_of_week, month, numberedDate, value, year) VALUES (?,?,?,?,?)',
+                                                                    [ 6, 1, 20220131, 5000, 2022]);
+*/
+
+
+
+      //console.log("-------------------------------------- Fetching data from table ");
+
+      //const [result] = await (await open()).executeSql('select day_of_week as dayOfWeek, month, numberedDate, value, year from blood_glucose_level',
+                                                                              //  []);
+
+
+      //console.log("*********************** 0th row = ", result.rows.item(0));
+      //console.log("********************************** RESULT = ", result);
+      //console.log("********************************** RESULT size = ", result.rows.length);
+      //return result;
+//}
+
 
 function getChartView(sourceType: DataSourceType, data: OverviewSourceRow, query: DataDrivenQuery | undefined, highlightedDays: { [key: number]: boolean | undefined } | undefined): any {
 
-    const commonProps = {
-        preferredValueRange: data.preferredValueRange,
-        dataDrivenQuery: query,
-        highlightedDays: highlightedDays,
-        dateRange: data.range,
-        data: data.data,
-        goalValue: data.goal
-    }
+    //console.log("************************************************ We are starting with DB operation ");
+    //let dailyBarChart = <></>;
+    const commonP= {
+             preferredValueRange: data.preferredValueRange,
+             dataDrivenQuery: query,
+             highlightedDays: highlightedDays,
+             dateRange: data.range,
+             data: data.data,
+             goalValue: data.goal
+             }
 
-    switch (sourceType) {
-        case DataSourceType.StepCount:
-            return <DailyBarChart
-                {...commonProps}
-                dataSource={DataSourceType.StepCount}
-                valueTickFormat={(tick: number) => { return (tick % 1000 === 0 && tick != 0) ? tick / 1000 + "k" : commaNumber(tick) }} />
-        case DataSourceType.HoursSlept:
-            return <DailyBarChart
-                {...commonProps}
-                dataSource={DataSourceType.HoursSlept}
-                data={data.data.map((d: any) => ({ numberedDate: d.numberedDate, value: d.lengthInSeconds }))}
-                valueTickFormat={(tick: number) => { return DateTimeHelper.formatDuration(tick, true) }}
-                valueTicksOverride={(maxValue: number) => {
-                    const scale = scaleLinear().domain([0, Math.ceil(maxValue / 3600)]).nice()
-                    return {
-                        ticks: scale.ticks(5).map(t => t * 3600),
-                        newDomain: scale.domain().map(t => t * 3600)
+    console.log("@@@@@@@@@@@@@@@@@@@@DataSourceChartFrame getChartView data.data ===== ",data.data);
+    console.log("####################DataSourceChartFrame getChartView data.preferredValueRange ===== ",data.preferredValueRange);
+    //var abc;
+    /*const result2 = performDatabaseOperation().then(
+        (result) => {
+                // if (result != null){
+                let finalResult = [];
+                for (let i = 0; i < result.rows.length; i++)
+                {
+                    finalResult.push(result.rows.item(i));
+                    //console.log(result.rows.item(i));
+                }
+
+                          data.data = finalResult;
+//                         }
+//                         else
+//                             data.data = result;
+
+
+                      //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+                      /*const commonP= {
+                            preferredValueRange: data.preferredValueRange,
+                            dataDrivenQuery: query,
+                            highlightedDays: highlightedDays,
+                            dateRange: data.range,
+                            data: data.data,
+                            goalValue: data.goal
+                        }*/
+                         //const data1 = commonP.data
+                        //console.log(data1);
+                        // console.log("Range : "+data.data);
+                        /* lengthVar = data.data.length;
+                        // console.log("Size 11111111111111111 : "+data.data.length);
+                        sum=0;
+                        for(let i=0;i<data.data.length;i++)
+                        {
+                           sum=sum+data.data[i].value;
+                        }
+                        // console.log("Total : "+sum);
+                        // console.log("Avg: "+Math.round((sum/lengthVar)));
+
+                       range_start = data.data[0].value;
+                       range_end = data.data[lengthVar-1].value;
+                       avg_value = Math.round(sum/lengthVar);
+                       // console.log(range_start+" - "+range_end);
+                       // console.log("avg : "+avg_value);*/
+                    //console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Returning from getChartView() ", result);
+                    //console.log("DataSourceType =  ", sourceType);
+                    /*switch (sourceType) {
+                        case DataSourceType.StepCount:
+                            //console.log("Returning final DailyBarChart");
+                           /* abc =  <DailyBarChart
+                                          {...commonP}
+                                          dataSource={DataSourceType.StepCount}
+                                          valueTickFormat={(tick: number) => { return (tick % 1000 === 0 && tick != 0) ? tick / 1000 + "k" : commaNumber(tick) }} />
+                            //console.log(dailyBarChart);*/
+                   /*         //return dailyBarChart;
                     }
-                }}
-            />
-        case DataSourceType.HeartRate:
-            return <DailyHeartRateChart
-                {...commonProps}
-                dataSource={DataSourceType.HeartRate}
-            />
-        /*case DataSourceType.SleepRange:
-            return <DailySleepRangeChart
-                {...commonProps}
-                dataSource={DataSourceType.SleepRange}
-            />*/
-        case DataSourceType.Weight:
-            const weightData = data as WeightRangedData
-            return <DailyWeightChart
-                {...commonProps}
-            />
-    }
+            },
+            (onRejected) => {
+                    //console.log("DailChartFrrmae PerformDatabaseOperation() -> Promise rejected ", onRejected);
+                }
+    );*/
+//     console.log("result returned from performDatabaseOperation() = ", result);
+//     console.log("************************************************ Done with DB operation ");
+
+    //console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++"+result2);
+
+
+
+     /*return <DailyHeartRateChart
+                     {...commonProps}
+                     dataSource={DataSourceType.HeartRate}/>*/
+     return <DailyBarChart
+               {...commonP}
+               dataSource={DataSourceType.BloodGlucose}
+               valueTickFormat={(tick: number) => { return (tick % 1000 === 0 && tick != 0) ? tick / 1000 + "k" : commaNumber(tick) }} />
+
+
+     // console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+     // console.log(data.data);
+    // console.log("############################3 Result2 = ", result2)
+
 }
 
 export const DataSourceChartFrame = React.memo((props: {
@@ -341,12 +377,16 @@ export const DataSourceChartFrame = React.memo((props: {
 
 
     const spec = DataSourceManager.instance.getSpec(props.data.source)
+    console.log("~~~ In DataSourceChartFrame.tsx - props.data.source = ", props.data.source);
+    console.log("~~~ In DataSourceChartFrame.tsx - spec = ", spec);
 
     const measureUnitType = useSelector((appState: ReduxAppState) => appState.settingsState.unit)
 
     const todayInfo = useMemo(() => formatTodayValue(props.data.source, props.data.today, measureUnitType),
         [props.data.source, props.data.today, measureUnitType])
 
+    //console.log("((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))) ", getChartView(spec.type, props.data, props.filter, props.highlightedDays));
+    console.log("&*&*&* In DataSourceChartFrame.tsx props.data.statistics = ", props.data.statistics);
     return <View style={props.flat === true ? styles.containerStyleFlat : styles.containerStyle}>
         {props.showHeader !== false ?
             <View style={styles.headerStyle}>
@@ -375,12 +415,23 @@ export const DataSourceChartFrame = React.memo((props: {
             getChartView(spec.type, props.data, props.filter, props.highlightedDays)
         }
         <View style={styles.footerStyle}>{
-            props.data.statistics && props.data.statistics.map(stat => {
-                return <Text key={stat.type} style={styles.statValueStyle}>
-                    <Text style={styles.statLabelStyle}>{getStatisticsLabel(stat.type) + " "}</Text>
-                    <Text>{stat.value != null && (typeof stat.value == "number" || (stat.value[0] != null && stat.value[1] != null)) ? formatStatistics(props.data.source, stat.type, measureUnitType, stat.value) : "no value"}</Text>
-                </Text>
-            })
+            props.data.statistics && props.data.statistics.map(
+            function(stat) {
+                if (stat.type != "total")
+                {
+                    return <Text key={stat.type} style={styles.statValueStyle}>
+                        <Text style={styles.statLabelStyle}>{getStatisticsLabel(stat.type) + " "}</Text>
+                        <Text>{stat.value != null && (typeof stat.value == "number" || (stat.value[0] != null && stat.value[1] != null)) ? formatStatistics(props.data.source, stat.type, measureUnitType, stat.value) : "no value"}</Text>
+                    </Text>
+                }
+            }
+//             stat => {
+//                 return <Text key={stat.type} style={styles.statValueStyle}>
+//                     <Text style={styles.statLabelStyle}>{getStatisticsLabel(stat.type) + " "}</Text>
+//                     <Text>{stat.value != null && (typeof stat.value == "number" || (stat.value[0] != null && stat.value[1] != null)) ? formatStatistics(props.data.source, stat.type, measureUnitType, stat.value) : "no value"}</Text>
+//                 </Text>
+//             }
+)
         }
         </View>
     </View >

@@ -62,8 +62,10 @@ export function startSpeechSession(sessionId: string, speechContext: SpeechConte
                 dispatch(createStartDictationAction(sessionId))
             })
 
+
             VoiceDictator.instance.registerReceivedEventListener(result => {
                 //calculate diff
+                //console.log("88888888888888888888");
                 let resultReturn: DictationResult | null = null
                 if (previousDictationResult) {
                     const Diff = require('diff');
@@ -75,10 +77,11 @@ export function startSpeechSession(sessionId: string, speechContext: SpeechConte
                         ),
                     };
                 }
+
                 previousDictationResult = result
                 dispatch(createUpdateDictationResultAction(resultReturn || result, sessionId))
             })
-
+            //console.log("^^^^^^^^^^^^^^^^^^^");
             VoiceDictator.instance.registerStopEventListener(async error => {
                 console.log(sessionId, "dictator stop event")
                 if (hasDictatorStoppEventCalled === false) {
@@ -134,7 +137,7 @@ export function startSpeechSession(sessionId: string, speechContext: SpeechConte
                             context,
                             nluResult != null ? nluResult : "error"
                         )
-
+                        //console.log("0000000000000000000000000000000000000");
                         if (nluResult != null) {
                             //NLU successful
                             switch (nluResult.type) {

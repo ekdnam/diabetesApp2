@@ -40,13 +40,19 @@ export default class NLUCommandResolverImpl implements NLUCommandResolver {
     private constructor() { }
 
     private getCascadedDataSource(dataSourceVariables: VariableInfo[] | null | undefined, context: SpeechContext, explorationInfo: ExplorationInfo): DataSourceType | undefined {
-        return dataSourceVariables != null && dataSourceVariables.length > 0 ? dataSourceVariables[0].value :
+        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% In nlu.ts getCascadedDataSource() function ");
+        console.log("dataSourceVariables = ", dataSourceVariables);
+        const cascadedDataSource = dataSourceVariables != null && dataSourceVariables.length > 0 ? dataSourceVariables[0].value :
             (
                 (context as any)["dataSource"]
                 || explorationInfoHelper.getParameterValue(explorationInfo, ParameterType.DataSource)
                 || inferDataSource(explorationInfoHelper.getParameterValue(explorationInfo, ParameterType.IntraDayDataSource))
             )
             || (context.uiStatus["viewableDataSources"] != null && context.uiStatus["viewableDataSources"].length > 0 ? context.uiStatus["viewableDataSources"][0] as DataSourceType : null)
+
+        console.log("Returning value = ", cascadedDataSource);
+
+        return cascadedDataSource;
     }
 
     private static convertActionToNLUResult(action: ActionTypeBase | undefined | null, currentInfo: ExplorationInfo, preprocessed: PreProcessedInputText): NLUResult {
