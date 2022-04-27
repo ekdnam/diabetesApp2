@@ -375,7 +375,7 @@ const insertRecordToDBWithDate = async (bgvalue: any, userDate: any) => {
     const dateSplits = userDate.split('-');
     const ourYear = parseInt(dateSplits[0]);
     const ourMonth = parseInt(dateSplits[1]);
-    const ourDay = parseInt(dateSplits[2]);
+    const ourDay = parseInt(dateSplits[2])+1;
     const ourDate = new Date(ourYear, ourMonth - 1, ourDay);
     console.log(ourDate);
     const dayOfWeek = ourDate.getDay();

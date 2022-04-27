@@ -135,6 +135,9 @@ export const DailyBarChart = React.memo((prop: ChartProps) => {
     const scaleX = useContext(DateRangeScaleContext) || CommonBrowsingChartStyles
         .makeDateScale(undefined, prop.dateRange[0], prop.dateRange[1])
 
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^ prop.dateRange[1] = ", prop.dateRange[1])
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^ prop.dateRange[1] = ", typeof(prop.dateRange[1]))
+
     const xTickFormat = CommonBrowsingChartStyles.dateTickFormat(today)
 
     const valueMin = Math.min(d3Array.min(prop.data, d => d.value)!, prop.preferredValueRange[0] || Number.MAX_SAFE_INTEGER)
@@ -152,6 +155,32 @@ export const DailyBarChart = React.memo((prop: ChartProps) => {
 
     const avg = d3Array.mean(prop.data, d => d.value)!
 
+    const newToday = new Date()
+    const tomorrow = new Date(newToday)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+
+    const tomorrowNumberedDate = parseInt(tomorrow.toISOString().split('T')[0].replaceAll('-', ''));
+    const stringUserEndDate = prop.dateRange[1].toString()
+
+    console.log("stringUserEndDate = ", stringUserEndDate)
+    console.log("First slice = ", stringUserEndDate.slice(0, 4))
+    console.log("Second slice = ", stringUserEndDate.slice(4, 6))
+    console.log("Last slice = ", stringUserEndDate.slice(6, 8))
+
+    const ourYear = parseInt(stringUserEndDate.slice(0, 4));
+    const ourMonth = parseInt(stringUserEndDate.slice(4, 6));
+    const ourDay = parseInt(stringUserEndDate.slice(6, 8))+1;
+    const ourDate = new Date(ourYear, ourMonth - 1, ourDay);
+    console.log(ourDate);
+
+    let showTomorrowDate = false
+    if (tomorrow > ourDate)
+        showTomorrowDate = false
+    else
+        showTomorrowDate = true
+
+    console.log("showTomorrowDate = ", showTomorrowDate)
 
     const clusters = useMemo(() => {
 
@@ -209,8 +238,23 @@ export const DailyBarChart = React.memo((prop: ChartProps) => {
             {
                 Number.isNaN(avg) === false && <Line x1={0} x2={chartArea.width} y={scaleY(avg)} stroke={Colors.chartAvgLineColor} strokeWidth={CommonBrowsingChartStyles.AVERAGE_LINE_WIDTH} strokeDasharray={"2"} />
             }
+
+
+            {
+                showTomorrowDate == true ?
+
+                <PointFallbackCircle key={tomorrowNumberedDate}
+                x={scaleX(tomorrowNumberedDate)! + scaleX.bandwidth() * 0.5}
+                y={scaleY(avg)}
+                r={Math.min(scaleX.bandwidth(), 8) * 2}
+                fill='#FF0000'
+                stroke={getChartElementColor(shouldHighlightElements, prop.highlightedDays ? prop.highlightedDays[tomorrowNumberedDate] == true : false, today === tomorrowNumberedDate)}
+                thresholdRadius={1}
+                />
+                : <></>
+            }
+
         </G>
     </BandScaleChartTouchHandler>
 
 })
-
