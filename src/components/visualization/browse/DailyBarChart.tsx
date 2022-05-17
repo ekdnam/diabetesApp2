@@ -153,7 +153,9 @@ export const DailyBarChart = React.memo((prop: ChartProps) => {
         .y((d) => scaleY(d.value))
         .curve(d3Shape.curveCardinal)
 
-    const avg = d3Array.mean(prop.data, d => d.value)!
+    var avg = d3Array.mean(prop.data, d => d.value)!
+
+    console.log("*&*&*&* data= ", prop.data)
 
     const newToday = new Date()
     const tomorrow = new Date(newToday)
@@ -181,6 +183,47 @@ export const DailyBarChart = React.memo((prop: ChartProps) => {
         showTomorrowDate = true
 
     console.log("showTomorrowDate = ", showTomorrowDate)
+
+    /* time series analysis */
+    var timeseries = require("timeseries-analysis");
+
+    // constructing data array for forecasting using prop.data
+    var finalData = []
+    for (var i = 0; i < prop.data.length; i++)
+    {
+        console.log("one row = ", prop.data[i])
+        var dataRow = []
+        dataRow.push(prop.data[i].numberedDate)
+        dataRow.push(prop.data[i].value)
+        finalData.push(dataRow)
+    }
+
+   var t = new timeseries.main(finalData);
+
+    var forecastDatapoint	= 11;
+    var size = prop.data.length
+
+    // We calculate the AR coefficients of the 10 previous points
+    var coeffs = t.ARMaxEntropy({
+    	data: t.data.slice(0,size)
+    });
+
+    // Output the coefficients to the console
+    console.log("coeffs", coeffs);
+
+    // Now, we calculate the forecasted value of that 11th datapoint using the AR coefficients:
+    var forecast	= 0;	// Init the value at 0.
+    for (var i=0;i<coeffs.length;i++) {	// Loop through the coefficients
+
+    	forecast -= t.data[size-i-1][1]*coeffs[i];
+    	// Explanation for that line:
+    	// t.data contains the current dataset, which is in the format [ [date, value], [date,value], ... ]
+    	// For each coefficient, we substract from "forecast" the value of the "N - x" datapoint's value, multiplicated by the coefficient, where N is the last known datapoint value, and x is the coefficient's index.
+    }
+
+    console.log("**** forecast",Math.round(forecast));
+
+    var forecastedBloodGlucoseValue = Math.round(forecast);
 
     const clusters = useMemo(() => {
 
@@ -245,8 +288,8 @@ export const DailyBarChart = React.memo((prop: ChartProps) => {
 
                 <PointFallbackCircle key={tomorrowNumberedDate}
                 x={scaleX(tomorrowNumberedDate)! + scaleX.bandwidth() * 0.5}
-                y={scaleY(avg)}
-                r={Math.min(scaleX.bandwidth(), 8) * 2}
+                y={scaleY(forecastedBloodGlucoseValue)}
+                r={Math.min(scaleX.bandwidth(), 8)}
                 fill='#FF0000'
                 stroke={getChartElementColor(shouldHighlightElements, prop.highlightedDays ? prop.highlightedDays[tomorrowNumberedDate] == true : false, today === tomorrowNumberedDate)}
                 thresholdRadius={1}

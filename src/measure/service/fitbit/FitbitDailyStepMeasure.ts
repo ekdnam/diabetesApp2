@@ -59,7 +59,7 @@ async createTableAndInsertRows(): any {
      console.log("-------------------------------------- In createTableAndInsertRows() method");
 
        await (await this.open()).executeSql('CREATE TABLE IF NOT EXISTS blood_glucose_level(dayOfWeek INTEGER, month INTEGER, numberedDate DATE, value INTEGER, year INTEGER)', []);
-       //await (await this.open()).executeSql('delete from blood_glucose_level', []);
+      // await (await this.open()).executeSql('delete from blood_glucose_level', []);
        //console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ In FitbitDailyStepMeasure.ts all dbrpws deleted ");
         console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA In FitbitDailyStepMeasure.ts - createTableAndInsertRows() - fetching data from StepCount Table");
         const [resultStepCount] = await (await this.open()).executeSql('select * from StepCount limit 10', []);
@@ -525,6 +525,16 @@ async createTableAndInsertRows(): any {
 //             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 2, 3, 20220315, 186, 2022]);
 //             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 3, 3, 20220316, 170, 2022]);
 //             await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 4, 3, 20220317, 135, 2022]);
+
+// inserting data for 10thMay - 17th May
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 2, 5, 20220510, 120, 2022]);
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 3, 5, 20220511, 120, 2022]);
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 4, 5, 20220512, 120, 2022]);
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 5, 5, 20220513, 117, 2022]);
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 6, 5, 20220514, 110, 2022]);
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 0, 5, 20220515, 128, 2022]);
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 1, 5, 20220516, 108, 2022]);
+            await (await this.open()).executeSql('INSERT INTO blood_glucose_level ( dayOfWeek, month, numberedDate, value, year) VALUES (?,?,?,?,?)', [ 2, 5, 20220517, 190, 2022]);
 
 
         }

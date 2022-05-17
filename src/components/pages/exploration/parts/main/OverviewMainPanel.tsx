@@ -184,6 +184,7 @@ class OverviewMainPanel extends React.PureComponent<Props, State> {
     {
         console.log("### In OverviewMainPanel.tsx - renderItem() - exception thrown ", err);
     }
+
     return <DataSourceChartFrame key={item.source.toString()}
         data={item}
         filter={this.props.dataDrivenQuery}
